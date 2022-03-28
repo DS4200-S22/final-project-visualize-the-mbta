@@ -1,0 +1,62 @@
+﻿OBJECTID,LINE,ROUTE,GRADE,SHAPELEN
+25,BLUE,Bowdoin to Wonderland,7,3228.194244
+26,BLUE,Bowdoin to Wonderland,7,144.6739579
+27,BLUE,Bowdoin to Wonderland,1,494.3033104
+28,BLUE,Bowdoin to Wonderland,7,15.76855576
+29,BLUE,Bowdoin to Wonderland,6,268.978579
+30,ORANGE,Forest Hills to Oak Grove,1,2946.015801
+31,ORANGE,Forest Hills to Oak Grove,7,105.312585
+32,ORANGE,Forest Hills to Oak Grove,1,1342.326419
+33,ORANGE,Forest Hills to Oak Grove,4,368.2155692
+34,ORANGE,Forest Hills to Oak Grove,1,3010.706909
+35,GREEN,C - Cleveland Circle,2,3803.501983
+36,GREEN,E - Lechmere,4,1126.633568
+37,RED,B - Braintree  C - Alewife,1,9447.47303
+38,BLUE,Bowdoin to Wonderland,1,5410.217237
+39,GREEN,E - Health Street,2,1595.516662
+40,ORANGE,Forest Hills to Oak Grove,7,1137.22416
+41,RED,Mattapan Trolley,3,3873.644025
+42,RED,A - Ashmont  C - Alewife,1,3446.81034
+71,GREEN,E - Lechmere,1,233.1063592
+72,RED,A - Ashmont B - Braintree  C - Alewife,7,4670.033993
+73,RED,A - Ashmont B - Braintree  C - Alewife,4,1052.359302
+74,RED,A - Ashmont B - Braintree  C - Alewife,1,104.5861756
+75,RED,B - Braintree  C - Alewife,4,367.9829879
+82,ORANGE,Forest Hills to Oak Grove,7,3332.289263
+83,ORANGE,Forest Hills to Oak Grove,7,166.0890846
+84,ORANGE,Forest Hills to Oak Grove,6,496.6452075
+85,ORANGE,Forest Hills to Oak Grove,7,194.7785708
+86,ORANGE,Forest Hills to Oak Grove,6,304.1798949
+87,ORANGE,Forest Hills to Oak Grove,7,90.18186851
+88,ORANGE,Forest Hills to Oak Grove,6,353.460031
+89,ORANGE,Forest Hills to Oak Grove,7,106.412968
+90,ORANGE,Forest Hills to Oak Grove,6,160.4140484
+91,ORANGE,Forest Hills to Oak Grove,7,156.7016066
+92,ORANGE,Forest Hills to Oak Grove,6,652.7652473
+93,ORANGE,Forest Hills to Oak Grove,7,311.026295
+94,ORANGE,Forest Hills to Oak Grove,6,1059.783112
+95,ORANGE,Forest Hills to Oak Grove,7,346.7994132
+96,ORANGE,Forest Hills to Oak Grove,6,819.5470754
+97,ORANGE,Forest Hills to Oak Grove,6,377.0398454
+98,GREEN,D - Riverside,1,1618.957544
+99,GREEN,D - Riverside,7,196.0417193
+100,GREEN,D - Riverside,7,199.124852
+101,GREEN,C - Cleveland Circle,7,360.2424068
+102,GREEN,B - Boston College,7,184.3960643
+103,GREEN,E - Health Street,3,1132.031014
+104,GREEN,E - Health Street,7,1230.956804
+105,GREEN,C D,7,458.8762874
+106,GREEN,B C D E,7,2121.006209
+107,RED,A - Ashmont B - Braintree  C - Alewife,7,7955.708828
+108,GREEN,C E,7,1241.87361
+109,GREEN,B C D,7,1466.201268
+110,GREEN,B - Boston College,2,6559.338249
+111,GREEN,D - Riverside,1,13068.00397
+114,RED,A - Ashmont  C - Alewife,4,359.868291
+115,RED,B - Braintree  C - Alewife,1,3687.56009
+116,RED,B - Braintree  C - Alewife,4,381.7910675
+117,RED,A - Ashmont  C - Alewife,7,1312.666426
+118,RED,A - Ashmont  C - Alewife,1,217.2512816
+119,RED,Mattapan Trolley,1,215.1890545
+120,RED,B - Braintree  C - Alewife,1,572.2114945
+121,RED,B - Braintree  C - Alewife,4,356.3281949
