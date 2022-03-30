@@ -1,14 +1,4 @@
-//This is filler -- delete it and start coding your visualization tool here
-d3.select("#vis-container")
-  .append("text")
-  .attr("x", 20)
-  .attr("y", 20)
-  .text("Hello World!");
-
-//d3.csv("/data/Line,_and_Stop.csv", function (data) {
-//console.log(data);
-//});
-
+  // print first 10 rows to console
 d3.csv("/data/Line,_and_Stop.csv").then((data) => {
   // d3.csv parses a csv file and passes the data
   // to an anonymous function. Note how we build
@@ -20,3 +10,11 @@ d3.csv("/data/Line,_and_Stop.csv").then((data) => {
     console.log(data[i]);
   }
 });
+
+//https://d3-graph-gallery.com/graph/barplot_stacked_basicWide.html
+
+// Define color scale for barchart
+const color = d3
+  .scaleOrdinal()
+  .domain(["Morning", "Midday", "Afternoon", "Evening", "Night"])
+  .range(["#eff3ff", "#bdd7e7", "#6baed6", "#3182bd", "#08519c"]);
