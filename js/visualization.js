@@ -12,8 +12,8 @@ d3.csv("/data/Line,_and_Stop.csv").then((data) => {
 });
 
 //MAP
-const width = 960,
-    height = 500;
+const width1 = 960,
+    height1 = 500;
 
 var projection = d3.geoMercator()
     .center([109.25, 42.3])
@@ -21,8 +21,8 @@ var projection = d3.geoMercator()
     .rotate([-180,0]);
 
 var mapsvg = d3.select("#vis-container").append("svg")
-    .attr("width", width)
-    .attr("height", height);
+    .attr("width", width1)
+    .attr("height", height1);
 
 var path = d3.geoPath()
     .projection(projection);
