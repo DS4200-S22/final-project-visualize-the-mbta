@@ -60,7 +60,7 @@ var zoom = d3.zoom()
        .attr('transform', event.transform);
 });
 
-svg.call(zoom);
+mapsvg.call(zoom);
 
 
 
