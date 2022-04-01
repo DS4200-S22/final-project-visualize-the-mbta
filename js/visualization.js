@@ -65,12 +65,13 @@ mapsvg.call(zoom);
 
 
 
-
+//------------------------------------------------------------------------------------------------------------------
+// PIE CHART
 
 // piechart code used from https://d3-graph-gallery.com/graph/pie_annotation.html
 
 // set the dimensions and margins of the graph
-const width = 450,
+const width = 600,
     height = 450,
     margin = 40;
 
@@ -124,7 +125,22 @@ svg
   .style("text-anchor", "middle")
   .style("font-size", 17)
 
+// legend code from https://d3-graph-gallery.com/graph/custom_legend.html
 
+// Handmade legend
+// Circles
+svg.append("circle").attr("cx",200).attr("cy",80).attr("r", 6).style("fill", "#eff3ff")
+svg.append("circle").attr("cx",200).attr("cy",100).attr("r", 6).style("fill", "#bdd7e7")
+svg.append("circle").attr("cx",200).attr("cy",120).attr("r", 6).style("fill", "#6baed6")
+svg.append("circle").attr("cx",200).attr("cy",140).attr("r", 6).style("fill", "#3182bd")
+svg.append("circle").attr("cx",200).attr("cy",160).attr("r", 6).style("fill", "#08519c")
+// Texts
+svg.append("text").attr("x", 220).attr("y", 80).text("Morning").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 220).attr("y", 100).text("Mid-Day").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 220).attr("y", 120).text("Afternoon").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 220).attr("y", 140).text("Evening").style("font-size", "15px").attr("alignment-baseline","middle")
+svg.append("text").attr("x", 220).attr("y", 160).text("Night").style("font-size", "15px").attr("alignment-baseline","middle")
+//------------------------------------------------------------------------------------------------------------------
 
   d3.csv("/data/Line,_and_Stop.csv").then((data) => {
     // d3.csv parses a csv file and passes the data
