@@ -16,8 +16,8 @@ const width1 = 500,
     height1 = 600;
 
 var projection = d3.geoMercator()
-    .center([109.10, 42.38])
-    .scale(70000)
+    .center([109.07, 42.35])
+    .scale(80000)
     .rotate([-180,0]);
 
 var mapsvg = d3.select("#vis-container").append("svg")
@@ -47,6 +47,7 @@ d3.json("data/mass_counties.json").then(function(topology) {
 // load and display the stations and their names
     d3.csv("data/station_locations.csv").then(function(data) {
 
+
         //adding station points
         g.selectAll("circle")
         .data(data)
@@ -58,10 +59,11 @@ d3.json("data/mass_counties.json").then(function(topology) {
         .attr("cy", function(d) {
             return projection([d.X, d.Y])[1];
          })
-        .attr("r", 2)
+        .attr("r", 5)
         .style("fill", function(d){return station_color(d.line_color) });
- 
-        //adding text for station names
+        //.style("fill", "red");
+
+        //Adding text for station names
         g.selectAll("text")
         .data(data)
         .enter()
@@ -73,15 +75,16 @@ d3.json("data/mass_counties.json").then(function(topology) {
             return projection([d.X, d.Y])[1];
         })
         // place text at bottom of point
-        .attr("dy", -3) // set y position of bottom of text
+        .attr("dy", -1) // set y position of bottom of text
         .style("fill", "white") // fill the text with the colour black
         .attr("text-anchor", "middle") // set anchor y justification
         .text(function(d) {return d.stop_name;})
-        .attr("font-size", 3); ;
+        .attr("font-size", 10); ;
     });
 
 });
 
+var k = 1;
 
 var zoom = d3.zoom()
     .scaleExtent([1, 8])
@@ -91,12 +94,12 @@ var zoom = d3.zoom()
 
     g.selectAll("circle")
         .attr('transform', event.transform)
-        //.attr("r",2/d3.event.scale)
-        .attr("stroke-width", 1/event.scale);
+        .attr("r", 5/event.transform.k)
+        .attr("stroke-width", 3/event.scale);
 
     g.selectAll("text")
         .attr('transform', event.transform)
-        //.attr("font-size", 3/event.scale); 
+        .attr("font-size", 10/event.transform.k); 
 
 });
 
