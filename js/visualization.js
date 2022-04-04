@@ -12,12 +12,12 @@ d3.csv("/data/Line,_and_Stop.csv").then((data) => {
 });
 
 //MAP
-const width1 = 960,
-    height1 = 500;
+const width1 = 500,
+    height1 = 600;
 
 var projection = d3.geoMercator()
-    .center([109.25, 42.3])
-    .scale(50000)
+    .center([109.10, 42.38])
+    .scale(70000)
     .rotate([-180,0]);
 
 var mapsvg = d3.select("#vis-container").append("svg")
@@ -29,6 +29,11 @@ var path = d3.geoPath()
 
 var g = mapsvg.append("g");
 
+//colors for station points
+const station_color = d3.scaleOrdinal()
+                .domain(["red", "orange", "green", "blue"])
+                .range(["red", "orange", "green", "blue"]);
+
 // load and display massachusetts
 
 d3.json("data/mass_counties.json").then(function(topology) {
@@ -36,28 +41,63 @@ d3.json("data/mass_counties.json").then(function(topology) {
     g.selectAll("path")
        .data(topojson.feature(topology, topology.objects.cb_2015_massachusetts_county_20m).features)
        .enter().append("path")
-       .attr("d", path);
+       .attr("d", path)
+       .style("fill", "black");
+
+// load and display the stations and their names
+    d3.csv("data/station_locations.csv").then(function(data) {
+
+        //adding station points
+        g.selectAll("circle")
+        .data(data)
+        .enter()
+        .append("circle")
+        .attr("cx", function(d) {
+            return projection([d.X, d.Y])[0];
+         })
+        .attr("cy", function(d) {
+            return projection([d.X, d.Y])[1];
+         })
+        .attr("r", 2)
+        .style("fill", function(d){return station_color(d.line_color) });
+ 
+        //adding text for station names
+        g.selectAll("text")
+        .data(data)
+        .enter()
+        .append("text")
+        .attr("x", function(d) {
+            return projection([d.X, d.Y])[0];
+        })
+        .attr("y", function(d) {
+            return projection([d.X, d.Y])[1];
+        })
+        // place text at bottom of point
+        .attr("dy", -3) // set y position of bottom of text
+        .style("fill", "white") // fill the text with the colour black
+        .attr("text-anchor", "middle") // set anchor y justification
+        .text(function(d) {return d.stop_name;})
+        .attr("font-size", 3); ;
+    });
 
 });
 
-
-/*
-
-d3.json("data/world-110m2.json").then(function(topology) {
-
-    g.selectAll("path")
-       .data(topojson.feature(topology, topology.objects.countries).features)
-       .enter().append("path")
-       .attr("d", path);
-
-});
-*/
 
 var zoom = d3.zoom()
     .scaleExtent([1, 8])
     .on('zoom', function(event) {
-      g.selectAll('path')
-       .attr('transform', event.transform);
+    g.selectAll('path')
+        .attr('transform', event.transform);
+
+    g.selectAll("circle")
+        .attr('transform', event.transform)
+        //.attr("r",2/d3.event.scale)
+        .attr("stroke-width", 1/event.scale);
+
+    g.selectAll("text")
+        .attr('transform', event.transform)
+        //.attr("font-size", 3/event.scale); 
+
 });
 
 mapsvg.call(zoom);
@@ -83,7 +123,7 @@ const svg = d3.select("#vis-container")
   .append("svg")
     .attr("width", width)
     .attr("height", height)
-  .append("g")
+    .append("g")
     .attr("transform", `translate(${width / 2}, ${height / 2})`);
 
 // Create dummy data
@@ -201,5 +241,4 @@ svg.append("text").attr("x", 220).attr("y", 160).text("Night").style("font-size"
   
       
   });
-
 
