@@ -128,7 +128,7 @@ const svg = d3
   .attr("transform", `translate(${width / 2}, ${height / 2})`);
 
 // Create dummy data
-var dummy = { Morning: 35, MidDay: 20, Afternoon: 15, Evening: 25, Night: 5 };
+let dummy = { Morning: 35, MidDay: 20, Afternoon: 15, Evening: 25, Night: 5 };
 
 // set the color scale
 const color = d3
@@ -177,7 +177,6 @@ svg
 
 // legend code from https://d3-graph-gallery.com/graph/custom_legend.html
 
-// Handmade legend
 // Circles
 svg
   .append("circle")
@@ -254,7 +253,7 @@ d3.csv("/data/Line,_and_Stop.csv").then((data) => {
 
   // let's check our data
 
-  var tableData = [];
+  let tableData = [];
 
   for (let i = 0; i < 10; i++) {
     let row = [];
@@ -269,11 +268,11 @@ d3.csv("/data/Line,_and_Stop.csv").then((data) => {
   console.log(tableData);
 
   // Create table
-  var table = d3.select("#table-holder").append("table");
-  var thead = table.append("thead");
-  var tbody = table.append("tbody");
+  let table = d3.select("#table-holder").append("table");
+  let thead = table.append("thead");
+  let tbody = table.append("tbody");
 
-  var columns = ["Station", "Line(s)", "Ons", "Offs", "Average Flow"];
+  let columns = ["Station", "Line(s)", "Ons", "Offs", "Average Flow"];
 
   thead
     .append("tr")
@@ -285,9 +284,9 @@ d3.csv("/data/Line,_and_Stop.csv").then((data) => {
       return d;
     });
 
-  var rows = tbody.selectAll("tr").data(tableData).enter().append("tr");
+  let rows = tbody.selectAll("tr").data(tableData).enter().append("tr");
 
-  var cells = rows
+  let cells = rows
     .selectAll("td")
     .data(function (row) {
       return columns.map(function (column) {
