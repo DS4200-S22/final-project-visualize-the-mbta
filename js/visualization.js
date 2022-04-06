@@ -1,11 +1,11 @@
 // print first 10 rows to console
+let time_period_name_array = ["AM_PEAK"];
 d3.csv("/data/Line,_and_Stop.csv").then((data) => {
   // d3.csv parses a csv file and passes the data
   // to an anonymous function. Note how we build
   // our visual inside of this anonymous function
 
   // let's check our data
-  const time_period_name_array = [];
 
   for (let i = 0; i < 7920; i++) {
     time_period_name_array[i] = data[i]["time_period_name"];
@@ -15,93 +15,102 @@ d3.csv("/data/Line,_and_Stop.csv").then((data) => {
 
 //MAP
 const width1 = 500,
-    height1 = 600;
+  height1 = 600;
 
-let projection = d3.geoMercator()
-    .center([109.07, 42.35])
-    .scale(80000)
-    .rotate([-180,0]);
+let projection = d3
+  .geoMercator()
+  .center([109.07, 42.35])
+  .scale(80000)
+  .rotate([-180, 0]);
 
-let mapsvg = d3.select("#vis-container").append("svg")
-    .attr("width", width1)
-    .attr("height", height1);
+let mapsvg = d3
+  .select("#vis-container")
+  .append("svg")
+  .attr("width", width1)
+  .attr("height", height1);
 
-let path = d3.geoPath()
-    .projection(projection);
+let path = d3.geoPath().projection(projection);
 
 let g = mapsvg.append("g");
 
 //colors for station points
-const station_color = d3.scaleOrdinal()
-                .domain(["red", "orange", "green", "blue"])
-                .range(["red", "orange", "green", "blue"]);
+const station_color = d3
+  .scaleOrdinal()
+  .domain(["red", "orange", "green", "blue"])
+  .range(["red", "orange", "green", "blue"]);
 
 // load and display massachusetts
 
-d3.json("data/mass_counties.json").then(function(topology) {
+d3.json("data/mass_counties.json").then(function (topology) {
+  g.selectAll("path")
+    .data(
+      topojson.feature(
+        topology,
+        topology.objects.cb_2015_massachusetts_county_20m
+      ).features
+    )
+    .enter()
+    .append("path")
+    .attr("d", path)
+    .style("fill", "black");
 
-    g.selectAll("path")
-       .data(topojson.feature(topology, topology.objects.cb_2015_massachusetts_county_20m).features)
-       .enter().append("path")
-       .attr("d", path)
-       .style("fill", "black");
+  // load and display the stations and their names
+  d3.csv("data/station_locations.csv").then(function (data) {
+    //adding station points
+    g.selectAll("circle")
+      .data(data)
+      .enter()
+      .append("circle")
+      .attr("cx", function (d) {
+        return projection([d.X, d.Y])[0];
+      })
+      .attr("cy", function (d) {
+        return projection([d.X, d.Y])[1];
+      })
+      .attr("r", 5)
+      .style("fill", function (d) {
+        return station_color(d.line_color);
+      });
 
-// load and display the stations and their names
-    d3.csv("data/station_locations.csv").then(function(data) {
-
-        //adding station points
-        g.selectAll("circle")
-        .data(data)
-        .enter()
-        .append("circle")
-        .attr("cx", function(d) {
-            return projection([d.X, d.Y])[0];
-         })
-        .attr("cy", function(d) {
-            return projection([d.X, d.Y])[1];
-         })
-        .attr("r", 5)
-        .style("fill", function(d){return station_color(d.line_color) });
-
-        //Adding text for station names
-        g.selectAll("text")
-        .data(data)
-        .enter()
-        .append("text")
-        .attr("x", function(d) {
-            return projection([d.X, d.Y])[0];
-        })
-        .attr("y", function(d) {
-            return projection([d.X, d.Y])[1];
-        })
-        // place text at bottom of point
-        .attr("dy", -1) 
-        .style("fill", "white") 
-        .attr("text-anchor", "middle")
-        .text(function(d) {return d.stop_name;})
-        .attr("font-size", 10); ;
-    });
-
+    //Adding text for station names
+    g.selectAll("text")
+      .data(data)
+      .enter()
+      .append("text")
+      .attr("x", function (d) {
+        return projection([d.X, d.Y])[0];
+      })
+      .attr("y", function (d) {
+        return projection([d.X, d.Y])[1];
+      })
+      // place text at bottom of point
+      .attr("dy", -1)
+      .style("fill", "white")
+      .attr("text-anchor", "middle")
+      .text(function (d) {
+        return d.stop_name;
+      })
+      .attr("font-size", 10);
+  });
 });
 
 let k = 1;
 
-let zoom = d3.zoom()
-    .scaleExtent([1, 8])
-    .on('zoom', function(event) {
-    g.selectAll('path')
-        .attr('transform', event.transform);
+let zoom = d3
+  .zoom()
+  .scaleExtent([1, 8])
+  .on("zoom", function (event) {
+    g.selectAll("path").attr("transform", event.transform);
 
     g.selectAll("circle")
-        .attr('transform', event.transform)
-        .attr("r", 5/event.transform.k)
-        .attr("stroke-width", 3/event.scale);
+      .attr("transform", event.transform)
+      .attr("r", 5 / event.transform.k)
+      .attr("stroke-width", 3 / event.scale);
 
     g.selectAll("text")
-        .attr('transform', event.transform)
-        .attr("font-size", 10/event.transform.k); 
-
-});
+      .attr("transform", event.transform)
+      .attr("font-size", 10 / event.transform.k);
+  });
 
 mapsvg.call(zoom);
 
@@ -128,7 +137,71 @@ const svg = d3
   .attr("transform", `translate(${width / 2}, ${height / 2})`);
 
 // Create dummy data
-let dummy = { Morning: 35, MidDay: 20, Afternoon: 15, Evening: 25, Night: 5 };
+let dummy = {
+  AM_PEAK: 10,
+  EARLY_AM: 10,
+  EVENING: 10,
+  LATE_EVENING: 10,
+  MIDDAY_BASE: 10,
+  MIDDDAY_SCHOOL: 10,
+  NIGHT: 10,
+  OFF_PEAK: 10,
+  PM_PEAK: 10,
+  VERY_EARLY_MORNING: 10,
+};
+
+// calculating the percentages for the pie chart, live data being used
+let AM_PEAK_count = 0;
+let EARLY_AM_count = 0;
+let EVENING_count = 0;
+let LATE_EVENING_count = 0;
+let MIDDAY_BASE_count = 0;
+let MIDDAY_SCHOOL_count = 0;
+let NIGHT_count = 0;
+let OFF_PEAK_count = 0;
+let PM_PEAK_count = 0;
+let VERY_EARLY_MORNING_count = 0;
+
+console.log("before forloop");
+console.log(time_period_name_array);
+for (let i = 0; i < time_period_name_array.length; i++) {
+  console.log("hello");
+  switch (time_period_name_array[i]) {
+    case "AM_PEAK":
+      AM_PEAK_count++;
+      break;
+    case "EARLY_AM":
+      EARLY_AM_count++;
+      break;
+    case "EVENING":
+      EVENING_count++;
+      break;
+    case "LATE_EVENING":
+      LATE_EVENING_count++;
+      break;
+    case "MIDDAY_BASE":
+      MIDDAY_BASE_count++;
+      break;
+    case "MIDDAY_SCHOOL":
+      MIDDAY_SCHOOL_count++;
+      break;
+    case "NIGHT":
+      NIGHT_count++;
+      break;
+    case "OFF_PEAK":
+      OFF_PEAK_count++;
+      break;
+    case "PM_PEAK":
+      PM_PEAK_count++;
+      break;
+    case "VERY_EARLY_MORNING":
+      VERY_EARLY_MORNING_count++;
+      break;
+    default:
+      console.log("no  match in counting for pie chart");
+  }
+}
+console.log(AM_PEAK_count);
 
 // set the color scale
 const color = d3
