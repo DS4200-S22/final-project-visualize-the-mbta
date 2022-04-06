@@ -17,19 +17,19 @@ d3.csv("/data/Line,_and_Stop.csv").then((data) => {
 const width1 = 500,
     height1 = 600;
 
-var projection = d3.geoMercator()
+let projection = d3.geoMercator()
     .center([109.07, 42.35])
     .scale(80000)
     .rotate([-180,0]);
 
-var mapsvg = d3.select("#vis-container").append("svg")
+let mapsvg = d3.select("#vis-container").append("svg")
     .attr("width", width1)
     .attr("height", height1);
 
-var path = d3.geoPath()
+let path = d3.geoPath()
     .projection(projection);
 
-var g = mapsvg.append("g");
+let g = mapsvg.append("g");
 
 //colors for station points
 const station_color = d3.scaleOrdinal()
@@ -62,7 +62,6 @@ d3.json("data/mass_counties.json").then(function(topology) {
          })
         .attr("r", 5)
         .style("fill", function(d){return station_color(d.line_color) });
-        //.style("fill", "red");
 
         //Adding text for station names
         g.selectAll("text")
@@ -76,18 +75,18 @@ d3.json("data/mass_counties.json").then(function(topology) {
             return projection([d.X, d.Y])[1];
         })
         // place text at bottom of point
-        .attr("dy", -1) // set y position of bottom of text
-        .style("fill", "white") // fill the text with the colour black
-        .attr("text-anchor", "middle") // set anchor y justification
+        .attr("dy", -1) 
+        .style("fill", "white") k
+        .attr("text-anchor", "middle")
         .text(function(d) {return d.stop_name;})
         .attr("font-size", 10); ;
     });
 
 });
 
-var k = 1;
+let k = 1;
 
-var zoom = d3.zoom()
+let zoom = d3.zoom()
     .scaleExtent([1, 8])
     .on('zoom', function(event) {
     g.selectAll('path')
