@@ -76,7 +76,7 @@ d3.json("data/mass_counties.json").then(function(topology) {
         })
         // place text at bottom of point
         .attr("dy", -1) 
-        .style("fill", "white") k
+        .style("fill", "white") 
         .attr("text-anchor", "middle")
         .text(function(d) {return d.stop_name;})
         .attr("font-size", 10); ;
