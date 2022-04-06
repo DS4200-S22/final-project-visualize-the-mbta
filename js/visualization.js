@@ -1,6 +1,6 @@
 // print first 10 rows to console
 let time_period_name_array = ["AM_PEAK"];
-d3.csv("/data/Line,_and_Stop.csv").then((data) => {
+d3.csv("data/Line,_and_Stop.csv").then((data) => {
   // d3.csv parses a csv file and passes the data
   // to an anonymous function. Note how we build
   // our visual inside of this anonymous function
