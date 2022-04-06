@@ -341,7 +341,7 @@ d3.csv("/data/Line,_and_Stop.csv").then((data) => {
   console.log(tableData);
 
   // Create table
-  let table = d3.select("#table-holder").append("table");
+  let table = d3.select("#table-container").append("table");
   let thead = table.append("thead");
   let tbody = table.append("tbody");
 
