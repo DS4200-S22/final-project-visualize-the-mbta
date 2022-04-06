@@ -328,7 +328,7 @@ d3.csv("data/Line,_and_Stop.csv").then((data) => {
 
   let tableData = [];
 
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < data.length; i++) {
     let row = [];
     row["Station"] = data[i]["stop_name"];
     row["Line(s)"] = data[i]["route_name"];
@@ -336,7 +336,22 @@ d3.csv("data/Line,_and_Stop.csv").then((data) => {
     row["Offs"] = data[i]["average_offs"];
     row["Average Flow"] = data[i]["average_flow"];
 
-    tableData.push(row);
+    let found = false;
+    for (let k = 0; k < tableData.length; k++) {
+      if (tableData[k]["Station"] == data[i]["stop_name"] && tableData[k]["Line(s)"] == data[i]["route_name"]) {
+        tableData[k]["Ons"] = parseInt(tableData[k]["Ons"]) + parseInt(data[i]["average_ons"]);
+        tableData[k]["Offs"] = parseInt(tableData[k]["Offs"]) + parseInt(data[i]["average_offs"]);
+        tableData[k]["Average Flow"] = parseInt(tableData[k]["Average Flow"]) + parseInt(data[i]["average_flow"]);
+        found = true;
+        break;
+      }
+    }
+
+    // TODO: Remove tableData.length <= 10. This only shows the first 10
+    if (found == false && tableData.length <= 10) {
+      tableData.push(row);
+    }
+
   }
   console.log(tableData);
 
