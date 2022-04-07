@@ -114,7 +114,6 @@ d3.csv("data/Line,_and_Stop.csv").then((data) => {
   for (let i = 0; i < 7920; i++) {
     time_period_name_array[i] = data[i]["time_period_name"];
   }
-  console.log(time_period_name_array);
 
   // piechart code used from https://d3-graph-gallery.com/graph/pie_annotation.html
 
@@ -147,8 +146,6 @@ d3.csv("data/Line,_and_Stop.csv").then((data) => {
   let PM_PEAK_count = 0;
   let VERY_EARLY_MORNING_count = 0;
 
-  console.log("before forloop");
-  console.log(time_period_name_array);
   for (let i = 0; i < time_period_name_array.length; i++) {
     switch (time_period_name_array[i]) {
       case "AM_PEAK":
@@ -417,7 +414,6 @@ d3.csv("data/Line,_and_Stop.csv").then((data) => {
 
     tableData.push(row);
   }
-  console.log(tableData);
 
   // Create table
   let table = d3.select("#table-container").append("table");
