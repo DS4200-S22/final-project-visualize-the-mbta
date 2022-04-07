@@ -21,6 +21,11 @@ h1, h2, h3 {
   height: 100%;
 }
 
+.color_background {
+    background-color: #FAFDAD;
+    padding: 3px; 
+}
+
 /* Full-width and Full-height */
 .table-holder {
 	width: 100%;
