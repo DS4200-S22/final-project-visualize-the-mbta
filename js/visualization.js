@@ -423,13 +423,17 @@ d3.csv("data/Line,_and_Stop.csv").then((data) => {
       }
     }
 
+    
     // TODO: Remove tableData.length <= 10. This only shows the first 10
     if (found == false && tableData.length <= 10) {
       tableData.push(row);
     }
 
   }
-  console.log(tableData);
+  console.log("Printing first 10 entries in table");
+  for (let i = 0; i < 10; i++) {
+    console.log(tableData[i]);
+  }
 
   // Create table
   let table = d3.select("#table-container").append("table");
