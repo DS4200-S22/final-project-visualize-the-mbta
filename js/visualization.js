@@ -494,6 +494,7 @@ d3.csv("data/Line,_and_Stop.csv").then(function (data) {
     (d) => d.route_id
   );
 
+  // Add color 
   const barColor = d3
     .scaleOrdinal()
     .range(["#00843D", "#003DA5", "#ED8B00", "#DA291C"]);
@@ -532,6 +533,7 @@ d3.csv("data/Line,_and_Stop.csv").then(function (data) {
   // Bar Chart Axis
   // Axis Labels code from https://stackoverflow.com/questions/11189284/d3-axis-labeling
 
+  // X Label
   barSvg
     .append("text")
     .attr("class", "x label")
@@ -540,6 +542,7 @@ d3.csv("data/Line,_and_Stop.csv").then(function (data) {
     .attr("y", barHeight + 50)
     .text("Line Name");
 
+  // Y Label
   barSvg
     .append("text")
     .attr("class", "y label")
