@@ -1,6 +1,11 @@
+
+
+
 //MAP
 const width1 = 500,
   height1 = 600;
+
+//defining projection and map setup 
 
 let projection = d3
   .geoMercator()
@@ -24,6 +29,48 @@ const station_color = d3
   .domain(["red", "orange", "green", "blue"])
   .range(["red", "orange", "green", "blue"]);
 
+// ARRAY OF SELECTED STATION NAMES
+
+let selected_stations = ["test"];
+
+console.log(selected_stations);
+
+//function for when station is selected by click
+
+
+// function select_click(){       
+//     if(!selected){
+//     selected = this;
+//     d3.select(selected)
+//     .style("stroke", 'yellow')
+//     .style("stroke-width", this.attr.r / 3);
+//    } 
+//     else if(selected == this){
+//     d3.select(selected)
+//     .style("stroke-width", 0);
+//     selected = undefined;
+//   }
+// }
+
+// function click_station() {
+//         let selected = d3.select(this);
+
+//         if(selected.style.strokewidth != 0){
+//             selected.style("stroke-width", this.attr.r / 3);
+//         }
+        
+//         else{
+//             selected.style("stroke-width", 0);
+//         }  
+
+//         selected_stations.push(this.stop_name);
+//         console.log(selected_stations);   
+// };
+
+
+
+
+
 // load and display massachusetts
 
 d3.json("data/mass_counties.json").then(function (topology) {
@@ -41,11 +88,13 @@ d3.json("data/mass_counties.json").then(function (topology) {
 
   // load and display the stations and their names
   d3.csv("data/station_locations.csv").then(function (data) {
+
     //adding station points
     g.selectAll("circle")
       .data(data)
       .enter()
       .append("circle")
+      .attr("onclick", "selected()") //On click, do selection
       .attr("cx", function (d) {
         return projection([d.X, d.Y])[0];
       })
@@ -55,9 +104,23 @@ d3.json("data/mass_counties.json").then(function (topology) {
       .attr("r", 5)
       .style("fill", function (d) {
         return station_color(d.line_color);
+      })
+
+      //adding click selection function
+    
+      .on('click', function () {
+            d3.select(this)
+            .style("stroke", 'yellow')
+            .style("stroke-width", this.attr.r / 3);  
+
+            selected_stations.push(this.stop_name);
+            console.log(selected_stations);
+
       });
 
-    //Adding text for station names
+
+
+    //adding text for station names
     g.selectAll("text")
       .data(data)
       .enter()
@@ -68,17 +131,23 @@ d3.json("data/mass_counties.json").then(function (topology) {
       .attr("y", function (d) {
         return projection([d.X, d.Y])[1];
       })
-      // place text at bottom of point
+
+      // place text at above
       .attr("dy", -1)
       .style("fill", "white")
       .attr("text-anchor", "middle")
+      .attr("font-size", 10)
       .text(function (d) {
         return d.stop_name;
-      })
-      .attr("font-size", 10);
+      });
+
+
   });
 });
 
+console.log(selected_stations);
+
+//zoom functionality added
 let k = 1;
 
 let zoom = d3
@@ -89,15 +158,24 @@ let zoom = d3
 
     g.selectAll("circle")
       .attr("transform", event.transform)
-      .attr("r", 5 / event.transform.k)
-      .attr("stroke-width", 3 / event.scale);
-
+      .attr("r", 5 / (event.transform.k))
+      .attr("stroke-width", 3 /(event.transform.k) );
+      
     g.selectAll("text")
       .attr("transform", event.transform)
       .attr("font-size", 10 / event.transform.k);
   });
 
+//calling zoom 
+
 mapsvg.call(zoom);
+
+
+
+
+
+
+
 
 //------------------------------------------------------------------------------------------------------------------
 // PIE CHART
