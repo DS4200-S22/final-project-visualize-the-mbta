@@ -1,6 +1,3 @@
-
-
-
 //MAP
 const width1 = 500,
   height1 = 600;
@@ -29,50 +26,27 @@ const station_color = d3
   .domain(["red", "orange", "green", "blue"])
   .range(["red", "orange", "green", "blue"]);
 
-// ARRAY OF SELECTED STATION NAMES
+// array of selected station names
+let selected_stations = [];
 
-let selected_stations = ["test"];
-
-console.log(selected_stations);
-
-//function for when station is selected by click
-
-
-// function select_click(){       
-//     if(!selected){
-//     selected = this;
-//     d3.select(selected)
-//     .style("stroke", 'yellow')
-//     .style("stroke-width", this.attr.r / 3);
-//    } 
-//     else if(selected == this){
-//     d3.select(selected)
-//     .style("stroke-width", 0);
-//     selected = undefined;
-//   }
-// }
-
-// function click_station() {
-//         let selected = d3.select(this);
-
-//         if(selected.style.strokewidth != 0){
-//             selected.style("stroke-width", this.attr.r / 3);
-//         }
-        
-//         else{
-//             selected.style("stroke-width", 0);
-//         }  
-
-//         selected_stations.push(this.stop_name);
-//         console.log(selected_stations);   
-// };
-
-
-
-
+//function that handles selecting and unselecting
+function select_click(){
+  if (d3.select(this).style("stroke") == 'yellow') { //if already selected
+    d3.select(this)
+      .style("stroke", '');
+    let index = selected_stations.indexOf(this.getAttribute("station")); //index of station in array
+    selected_stations.splice(index, 1); //remove from array
+    console.log(selected_stations);
+  } else {
+    d3.select(this)
+      .style("stroke", 'yellow')
+      .style("stroke-width", this.r / 3);
+    selected_stations.push(this.getAttribute("station")); //add to array
+    console.log(selected_stations);
+  }
+}
 
 // load and display massachusetts
-
 d3.json("data/mass_counties.json").then(function (topology) {
   g.selectAll("path")
     .data(
@@ -94,7 +68,6 @@ d3.json("data/mass_counties.json").then(function (topology) {
       .data(data)
       .enter()
       .append("circle")
-      .attr("onclick", "selected()") //On click, do selection
       .attr("cx", function (d) {
         return projection([d.X, d.Y])[0];
       })
@@ -102,23 +75,15 @@ d3.json("data/mass_counties.json").then(function (topology) {
         return projection([d.X, d.Y])[1];
       })
       .attr("r", 5)
+      // attribute which representing the corresponding station name to the circle
+      .attr("station", function (d) {
+        return d.stop_name;
+      }) 
       .style("fill", function (d) {
         return station_color(d.line_color);
       })
-
       //adding click selection function
-    
-      .on('click', function () {
-            d3.select(this)
-            .style("stroke", 'yellow')
-            .style("stroke-width", this.attr.r / 3);  
-
-            selected_stations.push(this.stop_name);
-            console.log(selected_stations);
-
-      });
-
-
+      .on('click', select_click);
 
     //adding text for station names
     g.selectAll("text")
@@ -145,8 +110,6 @@ d3.json("data/mass_counties.json").then(function (topology) {
   });
 });
 
-console.log(selected_stations);
-
 //zoom functionality added
 let k = 1;
 
@@ -167,15 +130,7 @@ let zoom = d3
   });
 
 //calling zoom 
-
 mapsvg.call(zoom);
-
-
-
-
-
-
-
 
 //------------------------------------------------------------------------------------------------------------------
 // PIE CHART
@@ -472,6 +427,7 @@ d3.csv("data/Line,_and_Stop.csv").then((data) => {
 });
 
 //------------------------------------------------------------------------------------------------------------------
+// TABLE
 
 d3.csv("data/Line,_and_Stop.csv").then((data) => {
   // d3.csv parses a csv file and passes the data
@@ -550,7 +506,7 @@ d3.csv("data/Line,_and_Stop.csv").then((data) => {
 });
 
 //------------------------------------------------------------------------------------------------------------------
-// bar chart
+// BAR CHART
 // code used from https://d3-graph-gallery.com/graph/barplot_basic.html
 
 // set the dimensions and margins of the graph
