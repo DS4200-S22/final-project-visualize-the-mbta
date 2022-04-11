@@ -37,16 +37,6 @@ console.log(selected_stations);
 
 //function for when station is selected by click
 
-function click_station() {
-            d3.select(this)
-            .style("stroke", 'yellow')
-            .style("stroke-width", this.attr.r / 3);  
-
-            selected_stations.push(this.stop_name);
-            console.log(selected_stations);
-};
-
-
 
 // function select_click(){       
 //     if(!selected){
@@ -77,7 +67,6 @@ function click_station() {
 //         console.log(selected_stations);   
 // };
 
- 
 
 
 
@@ -119,7 +108,15 @@ d3.json("data/mass_counties.json").then(function (topology) {
 
       //adding click selection function
     
-      .on('click', "click_station");
+      .on('click', function () {
+            d3.select(this)
+            .style("stroke", 'yellow')
+            .style("stroke-width", this.attr.r / 3);  
+
+            selected_stations.push(this.stop_name);
+            console.log(selected_stations);
+
+      });
 
 
 
@@ -148,7 +145,7 @@ d3.json("data/mass_counties.json").then(function (topology) {
   });
 });
 
-
+console.log(selected_stations);
 
 //zoom functionality added
 let k = 1;
