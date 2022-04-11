@@ -38,6 +38,23 @@ console.log(selected_stations);
 //function for when station is selected by click
 
 function click_station() {
+
+    // let selected = this;
+
+    // if(selected.style.strokewidth != 0){
+    //         selected.style("stroke-width", this.attr.r / 3);
+    //     }
+        
+    //     else{
+    //         selected.style("stroke-width", 0);
+    //     }  
+
+    //     selected_stations.push(selected.stop_name);
+    //     console.log(selected_stations);   
+
+
+
+
             d3.select(this)
             .style("stroke", 'yellow')
             .style("stroke-width", this.attr.r / 3);  
@@ -46,6 +63,21 @@ function click_station() {
             console.log(selected_stations);
 };
 
+
+//function click_station() {
+//         let selected = d3.select(this);
+
+//         if(selected.style.strokewidth != 0){
+//             selected.style("stroke-width", this.attr.r / 3);
+//         }
+        
+//         else{
+//             selected.style("stroke-width", 0);
+//         }  
+
+//         selected_stations.push(this.stop_name);
+//         console.log(selected_stations);   
+// };
 
 
 // function select_click(){       
@@ -116,6 +148,8 @@ d3.json("data/mass_counties.json").then(function (topology) {
       .style("fill", function (d) {
         return station_color(d.line_color);
       })
+      .style("stroke-width", 0)
+      .style("stroke", "yellow")
 
       //adding click selection function
     
