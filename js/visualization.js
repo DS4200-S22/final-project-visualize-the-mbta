@@ -53,6 +53,8 @@ function click_station() {
     //     console.log(selected_stations);   
 
 
+
+
             d3.select(this)
             .style("stroke", 'yellow')
             .style("stroke-width", this.attr.r / 3);  
@@ -151,16 +153,7 @@ d3.json("data/mass_counties.json").then(function (topology) {
 
       //adding click selection function
     
-      .on('click', function() {
-
-            d3.select(this)
-            .style("stroke", 'yellow')
-            .style("stroke-width", this.attr.r / 3);  
-
-            selected_stations.push(this.stop_name);
-            console.log(selected_stations);
-
-      });
+      .on('click', "click_station");
 
 
 
