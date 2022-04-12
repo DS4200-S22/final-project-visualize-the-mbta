@@ -599,7 +599,7 @@ d3.csv("data/Line,_and_Stop.csv").then(function (data) {
     .attr("text-anchor", "middle")  
     .style("font-size", "20px") 
     .style("text-decoration", "underline")  
-    .text("Total Ridership for each Line");
+    .text("Total Ridership by Line over Fall 2017, 2018, and 2019");
 
 
   // X Label
