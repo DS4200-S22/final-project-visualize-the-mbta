@@ -28,21 +28,28 @@ const station_color = d3
 
 // array of selected station names
 let selected_stations = [];
+// array of selected lines
+let selected_lines = [];
 
-//function that handles selecting and unselecting
+// function that handles selecting and unselecting
 function select_click(){
   if (d3.select(this).style("stroke") == 'yellow') { //if already selected
     d3.select(this)
       .style("stroke", '');
-    let index = selected_stations.indexOf(this.getAttribute("station")); //index of station in array
-    selected_stations.splice(index, 1); //remove from array
-    console.log(selected_stations);
+    // remove station from array
+    let indexOfStation = selected_stations.indexOf(this.getAttribute("station"));
+    selected_stations.splice(indexOfStation, 1);
+    // remove line from array
+    let indexOfLine = selected_stations.indexOf(this.getAttribute("line"));
+    selected_lines.splice(indexOfLine, 1);
   } else {
     d3.select(this)
       .style("stroke", 'yellow')
       .style("stroke-width", this.r / 3);
-    selected_stations.push(this.getAttribute("station")); //add to array
-    console.log(selected_stations);
+    // adds station to array
+    selected_stations.push(this.getAttribute("station"));
+    // adds line to array
+    selected_lines.push(this.getAttribute("line"));
   }
 }
 
@@ -78,6 +85,10 @@ d3.json("data/mass_counties.json").then(function (topology) {
       // attribute which representing the corresponding station name to the circle
       .attr("station", function (d) {
         return d.stop_name;
+      })
+      // attribute which representing the corresponding line name to the circle
+      .attr("line", function (d) {
+        return d.line_color;
       }) 
       .style("fill", function (d) {
         return station_color(d.line_color);
@@ -566,10 +577,30 @@ d3.csv("data/Line,_and_Stop.csv").then(function (data) {
     .attr("height", (d) => barHeight - y(d[1]))
     .attr("fill", function (d, i) {
       return barColor(i);
-    });
+    })
+    .attr("stroke-width", function (d) {
+      let name = d[0].toLowerCase();
+      if (selected_lines.indexOf(name) !== -1) {
+        return 3;
+      } else {
+        return 0;
+      }
+    })
+    .attr("stroke", 'black');
 
   // Bar Chart Axis
   // Axis Labels code from https://stackoverflow.com/questions/11189284/d3-axis-labeling
+
+  // Title
+  barSvg
+    .append("text")
+    .attr("x", (barWidth / 2))             
+    .attr("y", 0 - (barMargin.top / 2))
+    .attr("text-anchor", "middle")  
+    .style("font-size", "20px") 
+    .style("text-decoration", "underline")  
+    .text("Total Ridership for each Line");
+
 
   // X Label
   barSvg
