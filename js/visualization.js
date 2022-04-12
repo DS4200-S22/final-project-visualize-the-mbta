@@ -2,7 +2,7 @@
 const width1 = 500,
   height1 = 600;
 
-//defining projection and map setup 
+//defining projection and map setup
 
 let projection = d3
   .geoMercator()
@@ -32,19 +32,21 @@ let selected_stations = [];
 let selected_lines = [];
 
 // function that handles selecting and unselecting
-function select_click(){
-  if (d3.select(this).style("stroke") == 'yellow') { //if already selected
-    d3.select(this)
-      .style("stroke", '');
+function select_click() {
+  if (d3.select(this).style("stroke") == "yellow") {
+    //if already selected
+    d3.select(this).style("stroke", "");
     // remove station from array
-    let indexOfStation = selected_stations.indexOf(this.getAttribute("station"));
+    let indexOfStation = selected_stations.indexOf(
+      this.getAttribute("station")
+    );
     selected_stations.splice(indexOfStation, 1);
     // remove line from array
     let indexOfLine = selected_stations.indexOf(this.getAttribute("line"));
     selected_lines.splice(indexOfLine, 1);
   } else {
     d3.select(this)
-      .style("stroke", 'yellow')
+      .style("stroke", "yellow")
       .style("stroke-width", this.r / 3);
     // adds station to array
     selected_stations.push(this.getAttribute("station"));
@@ -69,7 +71,6 @@ d3.json("data/mass_counties.json").then(function (topology) {
 
   // load and display the stations and their names
   d3.csv("data/station_locations.csv").then(function (data) {
-
     //adding station points
     g.selectAll("circle")
       .data(data)
@@ -89,12 +90,12 @@ d3.json("data/mass_counties.json").then(function (topology) {
       // attribute which representing the corresponding line name to the circle
       .attr("line", function (d) {
         return d.line_color;
-      }) 
+      })
       .style("fill", function (d) {
         return station_color(d.line_color);
       })
       //adding click selection function
-      .on('click', select_click);
+      .on("click", select_click);
 
     //adding text for station names
     g.selectAll("text")
@@ -116,8 +117,6 @@ d3.json("data/mass_counties.json").then(function (topology) {
       .text(function (d) {
         return d.stop_name;
       });
-
-
   });
 });
 
@@ -132,19 +131,33 @@ let zoom = d3
 
     g.selectAll("circle")
       .attr("transform", event.transform)
-      .attr("r", 5 / (event.transform.k))
-      .attr("stroke-width", 3 /(event.transform.k) );
-      
+      .attr("r", 5 / event.transform.k)
+      .attr("stroke-width", 3 / event.transform.k);
+
     g.selectAll("text")
       .attr("transform", event.transform)
       .attr("font-size", 10 / event.transform.k);
   });
 
-//calling zoom 
+//calling zoom
 mapsvg.call(zoom);
 
 //------------------------------------------------------------------------------------------------------------------
 // PIE CHART
+
+// given array from selecting
+let selected_stations_array = ["Ruggles", "South Station"];
+let total_flow = 0;
+let AM_PEAK_flow = 0;
+let EARLY_AM_flow = 0;
+let EVENING_flow = 0;
+let LATE_EVENING_flow = 0;
+let MIDDAY_BASE_flow = 0;
+let MIDDAY_SCHOOL_flow = 0;
+let NIGHT_flow = 0;
+let OFF_PEAK_flow = 0;
+let PM_PEAK_flow = 0;
+let VERY_EARLY_MORNING_flow = 0;
 
 // print first 10 rows to console
 let time_period_name_array = ["AM_PEAK"];
@@ -158,6 +171,57 @@ d3.csv("data/Line,_and_Stop.csv").then((data) => {
   for (let i = 0; i < 7920; i++) {
     time_period_name_array[i] = data[i]["time_period_name"];
   }
+
+  // for-loop for number of stations
+  for (let i = 0; i < selected_stations_array.length; i++) {
+    let current_station = selected_stations_array[i];
+
+    for (let index = 0; index < data.length; index++) {
+      if (current_station == data[index]["stop_name"]) {
+        // adds average flows to get total flow for all stations
+        total_flow += parseInt(data[index]["average_flow"]);
+
+        // add to individual time flows
+        switch (data[index]["time_period_name"]) {
+          case "AM_PEAK":
+            AM_PEAK_flow += parseInt(data[index]["average_flow"]);
+            break;
+          case "EARLY_AM":
+            EARLY_AM_flow += parseInt(data[index]["average_flow"]);
+            break;
+          case "EVENING":
+            EVENING_flow += parseInt(data[index]["average_flow"]);
+            break;
+          case "LATE_EVENING":
+            LATE_EVENING_flow += parseInt(data[index]["average_flow"]);
+            break;
+          case "MIDDAY_BASE":
+            MIDDAY_BASE_flow += parseInt(data[index]["average_flow"]);
+            break;
+          case "MIDDAY_SCHOOL":
+            MIDDAY_SCHOOL_flow += parseInt(data[index]["average_flow"]);
+            break;
+          case "NIGHT":
+            NIGHT_flow += parseInt(data[index]["average_flow"]);
+            break;
+          case "OFF_PEAK":
+            OFF_PEAK_flow += parseInt(data[index]["average_flow"]);
+            break;
+          case "PM_PEAK":
+            PM_PEAK_flow += parseInt(data[index]["average_flow"]);
+            break;
+          case "VERY_EARLY_MORNING":
+            VERY_EARLY_MORNING_flow += parseInt(data[index]["average_flow"]);
+            break;
+          default:
+            break;
+        }
+      }
+    }
+  }
+  console.log(total_flow);
+  console.log(AM_PEAK_flow);
+  console.log(NIGHT_flow);
 
   // piechart code used from https://d3-graph-gallery.com/graph/pie_annotation.html
 
@@ -229,20 +293,21 @@ d3.csv("data/Line,_and_Stop.csv").then((data) => {
 
   // Convert data to percentages
   let pieData = {
-    AM_PEAK: percentRound(AM_PEAK_count),
-    EARLY_AM: percentRound(EARLY_AM_count),
-    EVENING: percentRound(EVENING_count),
-    LATE_EVENING: percentRound(LATE_EVENING_count),
-    MIDDAY_BASE: percentRound(MIDDAY_BASE_count),
-    MIDDDAY_SCHOOL: percentRound(MIDDAY_SCHOOL_count),
-    NIGHT: percentRound(NIGHT_count),
-    OFF_PEAK: percentRound(OFF_PEAK_count),
-    PM_PEAK: percentRound(PM_PEAK_count),
-    VERY_EARLY_MORNING: percentRound(VERY_EARLY_MORNING_count),
+    AM_PEAK: percentRound(AM_PEAK_flow / total_flow),
+    EARLY_AM: percentRound(EARLY_AM_flow / total_flow),
+    EVENING: percentRound(EVENING_flow / total_flow),
+    LATE_EVENING: percentRound(LATE_EVENING_flow / total_flow),
+    MIDDAY_BASE: percentRound(MIDDAY_BASE_flow / total_flow),
+    MIDDDAY_SCHOOL: percentRound(MIDDAY_SCHOOL_flow / total_flow),
+    NIGHT: percentRound(NIGHT_flow / total_flow),
+    OFF_PEAK: percentRound(OFF_PEAK_flow / total_flow),
+    PM_PEAK: percentRound(PM_PEAK_flow / total_flow),
+    VERY_EARLY_MORNING: percentRound(VERY_EARLY_MORNING_flow / total_flow),
   };
 
+  console.log(AM_PEAK_flow / total_flow);
   function percentRound(p1) {
-    return Math.round((p1 / data.length) * 100);
+    return Math.round(p1 * 100);
   }
 
   // set the color scale
@@ -459,21 +524,26 @@ d3.csv("data/Line,_and_Stop.csv").then((data) => {
 
     let found = false;
     for (let k = 0; k < tableData.length; k++) {
-      if (tableData[k]["Station"] == data[i]["stop_name"] && tableData[k]["Line(s)"] == data[i]["route_name"]) {
-        tableData[k]["Ons"] = parseInt(tableData[k]["Ons"]) + parseInt(data[i]["average_ons"]);
-        tableData[k]["Offs"] = parseInt(tableData[k]["Offs"]) + parseInt(data[i]["average_offs"]);
-        tableData[k]["Average Flow"] = parseInt(tableData[k]["Average Flow"]) + parseInt(data[i]["average_flow"]);
+      if (
+        tableData[k]["Station"] == data[i]["stop_name"] &&
+        tableData[k]["Line(s)"] == data[i]["route_name"]
+      ) {
+        tableData[k]["Ons"] =
+          parseInt(tableData[k]["Ons"]) + parseInt(data[i]["average_ons"]);
+        tableData[k]["Offs"] =
+          parseInt(tableData[k]["Offs"]) + parseInt(data[i]["average_offs"]);
+        tableData[k]["Average Flow"] =
+          parseInt(tableData[k]["Average Flow"]) +
+          parseInt(data[i]["average_flow"]);
         found = true;
         break;
       }
     }
 
-    
     // TODO: Remove tableData.length <= 10. This only shows the first 10
     if (found == false && tableData.length <= 10) {
       tableData.push(row);
     }
-
   }
   console.log("Printing first 10 entries in table");
   for (let i = 0; i < 10; i++) {
@@ -543,7 +613,7 @@ d3.csv("data/Line,_and_Stop.csv").then(function (data) {
     (d) => d.route_id
   );
 
-  // Add color 
+  // Add color
   const barColor = d3
     .scaleOrdinal()
     .range(["#00843D", "#003DA5", "#ED8B00", "#DA291C"]);
@@ -586,7 +656,7 @@ d3.csv("data/Line,_and_Stop.csv").then(function (data) {
         return 0;
       }
     })
-    .attr("stroke", 'black');
+    .attr("stroke", "black");
 
   // Bar Chart Axis
   // Axis Labels code from https://stackoverflow.com/questions/11189284/d3-axis-labeling
@@ -594,13 +664,12 @@ d3.csv("data/Line,_and_Stop.csv").then(function (data) {
   // Title
   barSvg
     .append("text")
-    .attr("x", (barWidth / 2))             
-    .attr("y", 0 - (barMargin.top / 2))
-    .attr("text-anchor", "middle")  
-    .style("font-size", "20px") 
-    .style("text-decoration", "underline")  
+    .attr("x", barWidth / 2)
+    .attr("y", 0 - barMargin.top / 2)
+    .attr("text-anchor", "middle")
+    .style("font-size", "20px")
+    .style("text-decoration", "underline")
     .text("Total Ridership by Line for Fall 2017-2019");
-
 
   // X Label
   barSvg
