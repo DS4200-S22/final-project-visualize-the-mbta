@@ -28,6 +28,7 @@ const station_color = d3
 
 // array of selected station names
 let selected_stations = [];
+
 // array of selected lines
 let selected_lines = [];
 
@@ -147,7 +148,7 @@ mapsvg.call(zoom);
 // PIE CHART
 
 // given array from selecting
-let selected_stations_array = ["Ruggles", "South Station"];
+let selected_stations_array = ["Ruggles", "Alewife"];
 let total_flow = 0;
 let AM_PEAK_flow = 0;
 let EARLY_AM_flow = 0;
@@ -228,8 +229,8 @@ d3.csv("data/Line,_and_Stop.csv").then((data) => {
 
   // set the dimensions and margins of the graph
   const width = 600,
-        height = 600,
-        margin = 70;
+    height = 600,
+    margin = 70;
 
   // The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
   const radius = Math.min(width, height) / 2.5 - margin;
@@ -254,43 +255,6 @@ d3.csv("data/Line,_and_Stop.csv").then((data) => {
   let OFF_PEAK_count = 0;
   let PM_PEAK_count = 0;
   let VERY_EARLY_MORNING_count = 0;
-
-  for (let i = 0; i < time_period_name_array.length; i++) {
-    switch (time_period_name_array[i]) {
-      case "AM_PEAK":
-        AM_PEAK_count++;
-        break;
-      case "EARLY_AM":
-        EARLY_AM_count++;
-        break;
-      case "EVENING":
-        EVENING_count++;
-        break;
-      case "LATE_EVENING":
-        LATE_EVENING_count++;
-        break;
-      case "MIDDAY_BASE":
-        MIDDAY_BASE_count++;
-        break;
-      case "MIDDAY_SCHOOL":
-        MIDDAY_SCHOOL_count++;
-        break;
-      case "NIGHT":
-        NIGHT_count++;
-        break;
-      case "OFF_PEAK":
-        OFF_PEAK_count++;
-        break;
-      case "PM_PEAK":
-        PM_PEAK_count++;
-        break;
-      case "VERY_EARLY_MORNING":
-        VERY_EARLY_MORNING_count++;
-        break;
-      default:
-        console.log("no  match in counting for pie chart");
-    }
-  }
 
   // Convert data to percentages
   let pieData = {
@@ -366,9 +330,9 @@ d3.csv("data/Line,_and_Stop.csv").then((data) => {
       let c = arcGenerator.centroid(d);
       let x = c[0];
       let y = c[1];
-      let h = Math.sqrt(x*x + y*y);
+      let h = Math.sqrt(x * x + y * y);
       let labelr = radius + 20;
-      return "translate(" + (x/h * labelr) + ',' + (y/h * labelr) + ")";
+      return "translate(" + (x / h) * labelr + "," + (y / h) * labelr + ")";
       //return `translate(${arcGenerator.centroid(d)})`;
     })
     .style("text-anchor", "middle")
@@ -603,29 +567,28 @@ const barMargin = { top: 30, right: 30, bottom: 70, left: 100 },
   barWidth = 460 - barMargin.left - barMargin.right,
   barHeight = 400 - barMargin.top - barMargin.bottom;
 
-  // append the svg object to the body of the page
-  let barSvg = d3
-    .select("#bar-container")
-    .append("svg")
-    .attr("width", barWidth + barMargin.left + barMargin.right)
-    .attr("height", barHeight + barMargin.top + barMargin.bottom)
-    .attr("id", "barSVG")
-    .append("g")
-    .attr("transform", `translate(${barMargin.left},${barMargin.top})`)
-
-// Parse the Data
-function drawBar() {
-
-  d3.select("#barSVG").remove();
-
-  barSvg = d3
+// append the svg object to the body of the page
+let barSvg = d3
   .select("#bar-container")
   .append("svg")
   .attr("width", barWidth + barMargin.left + barMargin.right)
   .attr("height", barHeight + barMargin.top + barMargin.bottom)
   .attr("id", "barSVG")
   .append("g")
-  .attr("transform", `translate(${barMargin.left},${barMargin.top})`)
+  .attr("transform", `translate(${barMargin.left},${barMargin.top})`);
+
+// Parse the Data
+function drawBar() {
+  d3.select("#barSVG").remove();
+
+  barSvg = d3
+    .select("#bar-container")
+    .append("svg")
+    .attr("width", barWidth + barMargin.left + barMargin.right)
+    .attr("height", barHeight + barMargin.top + barMargin.bottom)
+    .attr("id", "barSVG")
+    .append("g")
+    .attr("transform", `translate(${barMargin.left},${barMargin.top})`);
 
   d3.csv("data/Line,_and_Stop.csv").then(function (data) {
     // Calculate sum of flow for each station and store in array
@@ -634,12 +597,12 @@ function drawBar() {
       (v) => d3.sum(v, (d) => d.average_flow),
       (d) => d.route_id
     );
-  
+
     // Add color
     const barColor = d3
       .scaleOrdinal()
       .range(["#00843D", "#003DA5", "#ED8B00", "#DA291C"]);
-  
+
     // X axis
     const x = d3
       .scaleBand()
@@ -654,11 +617,11 @@ function drawBar() {
       .attr("transform", "translate(10,0)")
       .style("text-anchor", "end")
       .attr("id", "barchart");
-  
+
     // Add Y axis
     const y = d3.scaleLinear().domain([0, 7000000]).range([barHeight, 0]);
     barSvg.append("g").call(d3.axisLeft(y));
-  
+
     // Bars
     barSvg
       .selectAll("mybar")
@@ -681,10 +644,10 @@ function drawBar() {
       })
       .attr("stroke", "black")
       .attr("id", "bars");
-  
+
     // Bar Chart Axis
     // Axis Labels code from https://stackoverflow.com/questions/11189284/d3-axis-labeling
-  
+
     // Title
     barSvg
       .append("text")
@@ -694,7 +657,7 @@ function drawBar() {
       .style("font-size", "20px")
       .style("font-weight", "bold")
       .text("Total Ridership by Line for Fall 2017-2019");
-  
+
     // X Label
     barSvg
       .append("text")
@@ -703,7 +666,7 @@ function drawBar() {
       .attr("x", barWidth - 120)
       .attr("y", barHeight + 50)
       .text("Line Name");
-  
+
     // Y Label
     barSvg
       .append("text")
