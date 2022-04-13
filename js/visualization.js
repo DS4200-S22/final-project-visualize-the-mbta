@@ -236,7 +236,7 @@ d3.csv("data/Line,_and_Stop.csv").then((data) => {
 
   // append the svg object to the div
   const svg = d3
-    .select("#vis-container")
+    .select("#pie-container")
     .append("svg")
     .attr("width", width)
     .attr("height", height)
