@@ -227,12 +227,12 @@ d3.csv("data/Line,_and_Stop.csv").then((data) => {
   // piechart code used from https://d3-graph-gallery.com/graph/pie_annotation.html
 
   // set the dimensions and margins of the graph
-  const width = 700,
-    height = 550,
-    margin = 40;
+  const width = 600,
+        height = 600,
+        margin = 70;
 
   // The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
-  const radius = Math.min(width, height) / 2 - margin;
+  const radius = Math.min(width, height) / 2.5 - margin;
 
   // append the svg object to the div
   const svg = d3
@@ -241,7 +241,7 @@ d3.csv("data/Line,_and_Stop.csv").then((data) => {
     .attr("width", width)
     .attr("height", height)
     .append("g")
-    .attr("transform", `translate(${width / 2}, ${height / 2})`);
+    .attr("transform", `translate(${width / 3}, ${height / 2})`);
 
   // calculating the percentages for the pie chart, live data being used
   let AM_PEAK_count = 0;
@@ -354,6 +354,7 @@ d3.csv("data/Line,_and_Stop.csv").then((data) => {
     .style("opacity", 0.7);
 
   // Now add the annotation. Use the centroid method to get the best coordinates
+  // Annotation code from: https://stackoverflow.com/questions/8053424/label-outside-arc-pie-chart-d3-js
   svg
     .selectAll("mySlices")
     .data(data_ready)
@@ -362,10 +363,16 @@ d3.csv("data/Line,_and_Stop.csv").then((data) => {
       return d.data[1] + "%";
     })
     .attr("transform", function (d) {
-      return `translate(${arcGenerator.centroid(d)})`;
+      let c = arcGenerator.centroid(d);
+      let x = c[0];
+      let y = c[1];
+      let h = Math.sqrt(x*x + y*y);
+      let labelr = radius + 20;
+      return "translate(" + (x/h * labelr) + ',' + (y/h * labelr) + ")";
+      //return `translate(${arcGenerator.centroid(d)})`;
     })
     .style("text-anchor", "middle")
-    .style("font-size", 17);
+    .style("font-size", 12);
 
   // legend code from https://d3-graph-gallery.com/graph/custom_legend.html
 
@@ -681,11 +688,11 @@ function drawBar() {
     // Title
     barSvg
       .append("text")
-      .attr("x", barWidth / 2)
+      .attr("x", barWidth / 2 - 30)
       .attr("y", 0 - barMargin.top / 2)
       .attr("text-anchor", "middle")
       .style("font-size", "20px")
-      .style("text-decoration", "underline")
+      .style("font-weight", "bold")
       .text("Total Ridership by Line for Fall 2017-2019");
   
     // X Label
