@@ -54,7 +54,9 @@ function select_click() {
     // adds line to array
     selected_lines.push(this.getAttribute("line"));
   }
+  console.log(selected_stations);
   drawBar();
+  drawTable();
 }
 
 // load and display massachusetts
@@ -476,87 +478,105 @@ d3.csv("data/Line,_and_Stop.csv").then((data) => {
 
 //------------------------------------------------------------------------------------------------------------------
 // TABLE
-
-d3.csv("data/Line,_and_Stop.csv").then((data) => {
-  // d3.csv parses a csv file and passes the data
-  // to an anonymous function. Note how we build
-  // our visual inside of this anonymous function
-
-  // let's check our data
-
-  let tableData = [];
-
-  for (let i = 0; i < data.length; i++) {
-    let row = [];
-    row["Station"] = data[i]["stop_name"];
-    row["Line(s)"] = data[i]["route_name"];
-    row["Ons"] = data[i]["average_ons"];
-    row["Offs"] = data[i]["average_offs"];
-    row["Average Flow"] = data[i]["average_flow"];
-
-    let found = false;
-    for (let k = 0; k < tableData.length; k++) {
-      if (
-        tableData[k]["Station"] == data[i]["stop_name"] &&
-        tableData[k]["Line(s)"] == data[i]["route_name"]
-      ) {
-        tableData[k]["Ons"] =
-          parseInt(tableData[k]["Ons"]) + parseInt(data[i]["average_ons"]);
-        tableData[k]["Offs"] =
-          parseInt(tableData[k]["Offs"]) + parseInt(data[i]["average_offs"]);
-        tableData[k]["Average Flow"] =
-          parseInt(tableData[k]["Average Flow"]) +
-          parseInt(data[i]["average_flow"]);
-        found = true;
-        break;
+function drawTable() {
+  d3.select("#tableObject").remove();
+  console.log("Printing arguments");
+  console.log(selected_stations);
+  d3.csv("data/Line,_and_Stop.csv").then((data) => {
+    // d3.csv parses a csv file and passes the data
+    // to an anonymous function. Note how we build
+    // our visual inside of this anonymous function
+  
+    // let's check our data
+  
+    let tableData = [];
+  
+    for (let i = 0; i < data.length; i++) {
+      let row = [];
+      row["Station"] = data[i]["stop_name"];
+      row["Line(s)"] = data[i]["route_name"];
+      row["Ons"] = data[i]["average_ons"];
+      row["Offs"] = data[i]["average_offs"];
+      row["Average Flow"] = data[i]["average_flow"];
+  
+      let found = false;
+      for (let k = 0; k < tableData.length; k++) {
+        if (
+          tableData[k]["Station"] == data[i]["stop_name"] &&
+          tableData[k]["Line(s)"] == data[i]["route_name"]
+        ) {
+          tableData[k]["Ons"] =
+            parseInt(tableData[k]["Ons"]) + parseInt(data[i]["average_ons"]);
+          tableData[k]["Offs"] =
+            parseInt(tableData[k]["Offs"]) + parseInt(data[i]["average_offs"]);
+          tableData[k]["Average Flow"] =
+            parseInt(tableData[k]["Average Flow"]) +
+            parseInt(data[i]["average_flow"]);
+          found = true;
+          break;
+        }
+      }
+  
+      // TODO: Remove tableData.length <= 10. This only shows the first 10
+      if (found == false) {
+        tableData.push(row);
       }
     }
-
-    // TODO: Remove tableData.length <= 10. This only shows the first 10
-    if (found == false && tableData.length <= 10) {
-      tableData.push(row);
+    // console.log("Printing first 10 entries in table");
+    // for (let i = 0; i < 10; i++) {
+    //   console.log(tableData[i]);
+    // }
+  
+    // Filter tableData to selected_stations on the map
+    let tableDataFiltered = [];
+    for (let i = 0; i < selected_stations.length; i++) {
+      for (let k = 0; k < tableData.length; k++) {
+        if (selected_stations[i] == tableData[k]["Station"]) {
+          console.log(tableData[k]);
+          tableDataFiltered.push(tableData[k]);
+        }
+      }
     }
-  }
-  console.log("Printing first 10 entries in table");
-  for (let i = 0; i < 10; i++) {
-    console.log(tableData[i]);
-  }
-
-  // Create table
-  let table = d3.select("#table-container").append("table");
-  let thead = table.append("thead");
-  let tbody = table.append("tbody");
-
-  let columns = ["Station", "Line(s)", "Ons", "Offs", "Average Flow"];
-
-  thead
-    .append("tr")
-    .selectAll("th")
-    .data(columns)
-    .enter()
-    .append("th")
-    .text(function (d, i) {
-      return d;
-    });
-
-  let rows = tbody.selectAll("tr").data(tableData).enter().append("tr");
-
-  let cells = rows
-    .selectAll("td")
-    .data(function (row) {
-      return columns.map(function (column) {
-        return {
-          column: column,
-          value: row[column],
-        };
+    console.log("Printing tableDataFiltered");
+    console.log(tableDataFiltered);
+  
+    // Create table
+    let table = d3.select("#table-container").append("table").attr("id", "tableObject");
+    let thead = table.append("thead");
+    let tbody = table.append("tbody");
+  
+    let columns = ["Station", "Line(s)", "Ons", "Offs", "Average Flow"];
+  
+    thead
+      .append("tr")
+      .selectAll("th")
+      .data(columns)
+      .enter()
+      .append("th")
+      .text(function (d, i) {
+        return d;
       });
-    })
-    .enter()
-    .append("td")
-    .text(function (d, i) {
-      return d.value;
-    });
-});
+  
+    let rows = tbody.selectAll("tr").data(tableDataFiltered).enter().append("tr");
+  
+    let cells = rows
+      .selectAll("td")
+      .data(function (row) { 
+        return columns.map(function (column) {
+          return {
+            column: column,
+            value: row[column],
+          };
+        });
+      })
+      .enter()
+      .append("td")
+      .text(function (d, i) {
+        return d.value;
+      });
+  });
+}
+drawTable();
 
 //------------------------------------------------------------------------------------------------------------------
 // BAR CHART
