@@ -53,6 +53,7 @@ function select_click() {
     // adds line to array
     selected_lines.push(this.getAttribute("line"));
   }
+  drawBar();
 }
 
 // load and display massachusetts
@@ -595,99 +596,117 @@ const barMargin = { top: 30, right: 30, bottom: 70, left: 100 },
   barWidth = 460 - barMargin.left - barMargin.right,
   barHeight = 400 - barMargin.top - barMargin.bottom;
 
-// append the svg object to the body of the page
-const barSvg = d3
+  // append the svg object to the body of the page
+  let barSvg = d3
+    .select("#bar-container")
+    .append("svg")
+    .attr("width", barWidth + barMargin.left + barMargin.right)
+    .attr("height", barHeight + barMargin.top + barMargin.bottom)
+    .attr("id", "barSVG")
+    .append("g")
+    .attr("transform", `translate(${barMargin.left},${barMargin.top})`)
+
+// Parse the Data
+function drawBar() {
+
+  d3.select("#barSVG").remove();
+
+  barSvg = d3
   .select("#bar-container")
   .append("svg")
   .attr("width", barWidth + barMargin.left + barMargin.right)
   .attr("height", barHeight + barMargin.top + barMargin.bottom)
+  .attr("id", "barSVG")
   .append("g")
-  .attr("transform", `translate(${barMargin.left},${barMargin.top})`);
+  .attr("transform", `translate(${barMargin.left},${barMargin.top})`)
 
-// Parse the Data
-d3.csv("data/Line,_and_Stop.csv").then(function (data) {
-  // Calculate sum of flow for each station and store in array
-  const newData = d3.rollups(
-    data,
-    (v) => d3.sum(v, (d) => d.average_flow),
-    (d) => d.route_id
-  );
-
-  // Add color
-  const barColor = d3
-    .scaleOrdinal()
-    .range(["#00843D", "#003DA5", "#ED8B00", "#DA291C"]);
-
-  // X axis
-  const x = d3
-    .scaleBand()
-    .range([0, barWidth])
-    .domain(data.map((d) => d.route_id))
-    .padding(0.2);
-  barSvg
-    .append("g")
-    .attr("transform", `translate(0, ${barHeight})`)
-    .call(d3.axisBottom(x))
-    .selectAll("text")
-    .attr("transform", "translate(10,0)")
-    .style("text-anchor", "end");
-
-  // Add Y axis
-  const y = d3.scaleLinear().domain([0, 7000000]).range([barHeight, 0]);
-  barSvg.append("g").call(d3.axisLeft(y));
-
-  // Bars
-  barSvg
-    .selectAll("mybar")
-    .data(newData)
-    .join("rect")
-    .attr("x", (d) => x(d[0]))
-    .attr("y", (d) => y(d[1]))
-    .attr("width", x.bandwidth())
-    .attr("height", (d) => barHeight - y(d[1]))
-    .attr("fill", function (d, i) {
-      return barColor(i);
-    })
-    .attr("stroke-width", function (d) {
-      let name = d[0].toLowerCase();
-      if (selected_lines.indexOf(name) !== -1) {
-        return 3;
-      } else {
-        return 0;
-      }
-    })
-    .attr("stroke", "black");
-
-  // Bar Chart Axis
-  // Axis Labels code from https://stackoverflow.com/questions/11189284/d3-axis-labeling
-
-  // Title
-  barSvg
-    .append("text")
-    .attr("x", barWidth / 2)
-    .attr("y", 0 - barMargin.top / 2)
-    .attr("text-anchor", "middle")
-    .style("font-size", "20px")
-    .style("text-decoration", "underline")
-    .text("Total Ridership by Line for Fall 2017-2019");
-
-  // X Label
-  barSvg
-    .append("text")
-    .attr("class", "x label")
-    .attr("text-anchor", "end")
-    .attr("x", barWidth - 120)
-    .attr("y", barHeight + 50)
-    .text("Line Name");
-
-  // Y Label
-  barSvg
-    .append("text")
-    .attr("class", "y label")
-    .attr("text-anchor", "end")
-    .attr("y", -80)
-    .attr("x", -80)
-    .attr("dy", ".75em")
-    .attr("transform", "rotate(-90)")
-    .text("Total Ridership");
-});
+  d3.csv("data/Line,_and_Stop.csv").then(function (data) {
+    // Calculate sum of flow for each station and store in array
+    const newData = d3.rollups(
+      data,
+      (v) => d3.sum(v, (d) => d.average_flow),
+      (d) => d.route_id
+    );
+  
+    // Add color
+    const barColor = d3
+      .scaleOrdinal()
+      .range(["#00843D", "#003DA5", "#ED8B00", "#DA291C"]);
+  
+    // X axis
+    const x = d3
+      .scaleBand()
+      .range([0, barWidth])
+      .domain(data.map((d) => d.route_id))
+      .padding(0.2);
+    barSvg
+      .append("g")
+      .attr("transform", `translate(0, ${barHeight})`)
+      .call(d3.axisBottom(x))
+      .selectAll("text")
+      .attr("transform", "translate(10,0)")
+      .style("text-anchor", "end")
+      .attr("id", "barchart");
+  
+    // Add Y axis
+    const y = d3.scaleLinear().domain([0, 7000000]).range([barHeight, 0]);
+    barSvg.append("g").call(d3.axisLeft(y));
+  
+    // Bars
+    barSvg
+      .selectAll("mybar")
+      .data(newData)
+      .join("rect")
+      .attr("x", (d) => x(d[0]))
+      .attr("y", (d) => y(d[1]))
+      .attr("width", x.bandwidth())
+      .attr("height", (d) => barHeight - y(d[1]))
+      .attr("fill", function (d, i) {
+        return barColor(i);
+      })
+      .attr("stroke-width", function (d) {
+        let name = d[0].toLowerCase();
+        if (selected_lines.indexOf(name) !== -1) {
+          return 3;
+        } else {
+          return 0;
+        }
+      })
+      .attr("stroke", "black")
+      .attr("id", "bars");
+  
+    // Bar Chart Axis
+    // Axis Labels code from https://stackoverflow.com/questions/11189284/d3-axis-labeling
+  
+    // Title
+    barSvg
+      .append("text")
+      .attr("x", barWidth / 2)
+      .attr("y", 0 - barMargin.top / 2)
+      .attr("text-anchor", "middle")
+      .style("font-size", "20px")
+      .style("text-decoration", "underline")
+      .text("Total Ridership by Line for Fall 2017-2019");
+  
+    // X Label
+    barSvg
+      .append("text")
+      .attr("class", "x label")
+      .attr("text-anchor", "end")
+      .attr("x", barWidth - 120)
+      .attr("y", barHeight + 50)
+      .text("Line Name");
+  
+    // Y Label
+    barSvg
+      .append("text")
+      .attr("class", "y label")
+      .attr("text-anchor", "end")
+      .attr("y", -80)
+      .attr("x", -80)
+      .attr("dy", ".75em")
+      .attr("transform", "rotate(-90)")
+      .text("Total Ridership");
+  });
+}
+drawBar();
