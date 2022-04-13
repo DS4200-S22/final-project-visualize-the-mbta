@@ -293,16 +293,16 @@ d3.csv("data/Line,_and_Stop.csv").then((data) => {
 
   // Convert data to percentages
   let pieData = {
-    AM_PEAK: percentRound(AM_PEAK_flow / total_flow),
+    VERY_EARLY_MORNING: percentRound(VERY_EARLY_MORNING_flow / total_flow),
     EARLY_AM: percentRound(EARLY_AM_flow / total_flow),
-    EVENING: percentRound(EVENING_flow / total_flow),
-    LATE_EVENING: percentRound(LATE_EVENING_flow / total_flow),
+    AM_PEAK: percentRound(AM_PEAK_flow / total_flow),
     MIDDAY_BASE: percentRound(MIDDAY_BASE_flow / total_flow),
     MIDDDAY_SCHOOL: percentRound(MIDDAY_SCHOOL_flow / total_flow),
-    NIGHT: percentRound(NIGHT_flow / total_flow),
-    OFF_PEAK: percentRound(OFF_PEAK_flow / total_flow),
     PM_PEAK: percentRound(PM_PEAK_flow / total_flow),
-    VERY_EARLY_MORNING: percentRound(VERY_EARLY_MORNING_flow / total_flow),
+    OFF_PEAK: percentRound(OFF_PEAK_flow / total_flow),
+    EVENING: percentRound(EVENING_flow / total_flow),
+    LATE_EVENING: percentRound(LATE_EVENING_flow / total_flow),
+    NIGHT: percentRound(NIGHT_flow / total_flow),
   };
 
   console.log(AM_PEAK_flow / total_flow);
@@ -314,16 +314,16 @@ d3.csv("data/Line,_and_Stop.csv").then((data) => {
   const color = d3
     .scaleOrdinal()
     .range([
-      "#b1cb58",
-      "#b9d16a",
-      "#c2d67d",
-      "#cbdc8f",
-      "#d3e2a2",
-      "#dce8b5",
-      "#e5eec7",
-      "#eef3da",
-      "#f6f9ec",
-      "black",
+      "#fff100",
+      "#ff8c00",
+      "#e81123",
+      "#ec008c",
+      "#68217a",
+      "#00188f",
+      "#00bcf2",
+      "#00b294",
+      "#009e49",
+      "#bad80a",
     ]);
 
   // Compute the position of each group on the pie:
@@ -374,61 +374,61 @@ d3.csv("data/Line,_and_Stop.csv").then((data) => {
     .attr("cx", 200)
     .attr("cy", 80)
     .attr("r", 6)
-    .style("fill", "#b1cb58");
+    .style("fill", "#fff100");
   svg
     .append("circle")
     .attr("cx", 200)
     .attr("cy", 100)
     .attr("r", 6)
-    .style("fill", "#b9d16a");
+    .style("fill", "#ff8c00");
   svg
     .append("circle")
     .attr("cx", 200)
     .attr("cy", 120)
     .attr("r", 6)
-    .style("fill", "#c2d67d");
+    .style("fill", "#e81123");
   svg
     .append("circle")
     .attr("cx", 200)
     .attr("cy", 140)
     .attr("r", 6)
-    .style("fill", "#cbdc8f");
+    .style("fill", "#ec008c");
   svg
     .append("circle")
     .attr("cx", 200)
     .attr("cy", 160)
     .attr("r", 6)
-    .style("fill", "#d3e2a2");
+    .style("fill", "#68217a");
   svg
     .append("circle")
     .attr("cx", 200)
     .attr("cy", 180)
     .attr("r", 6)
-    .style("fill", "#dce8b5");
+    .style("fill", "#00188f");
   svg
     .append("circle")
     .attr("cx", 200)
     .attr("cy", 200)
     .attr("r", 6)
-    .style("fill", "#e5eec7");
+    .style("fill", "#00bcf2");
   svg
     .append("circle")
     .attr("cx", 200)
     .attr("cy", 220)
     .attr("r", 6)
-    .style("fill", "#eef3da");
+    .style("fill", "#00b294");
   svg
     .append("circle")
     .attr("cx", 200)
     .attr("cy", 240)
     .attr("r", 6)
-    .style("fill", "#f6f9ec");
+    .style("fill", "#009e49");
   svg
     .append("circle")
     .attr("cx", 200)
     .attr("cy", 260)
     .attr("r", 6)
-    .style("fill", "black");
+    .style("fill", "#bad80a");
   // Texts
   svg
     .append("text")
