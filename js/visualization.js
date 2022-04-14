@@ -57,6 +57,7 @@ function select_click() {
   console.log(selected_stations);
   drawBar();
   drawTable();
+  drawPie();
 }
 
 // load and display massachusetts
@@ -150,7 +151,7 @@ mapsvg.call(zoom);
 // PIE CHART
 
 // given array from selecting
-let selected_stations_array = ["Ruggles", "Alewife"];
+let all_stations_array = [];
 let total_flow = 0;
 let AM_PEAK_flow = 0;
 let EARLY_AM_flow = 0;
@@ -165,316 +166,345 @@ let VERY_EARLY_MORNING_flow = 0;
 
 // print first 10 rows to console
 let time_period_name_array = ["AM_PEAK"];
-d3.csv("data/Line,_and_Stop.csv").then((data) => {
-  // d3.csv parses a csv file and passes the data
-  // to an anonymous function. Note how we build
-  // our visual inside of this anonymous function
 
-  // let's check our data
+// set the dimensions and margins of the graph
+const width = 600,
+  height = 600,
+  margin = 70;
 
-  for (let i = 0; i < 7920; i++) {
-    time_period_name_array[i] = data[i]["time_period_name"];
-  }
+// The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
+const radius = Math.min(width, height) / 2.5 - margin;
 
-  // for-loop for number of stations
-  for (let i = 0; i < selected_stations_array.length; i++) {
-    let current_station = selected_stations_array[i];
+let svg = d3
+  .select("#pie-container")
+  .append("svg")
+  .attr("width", width)
+  .attr("height", height)
+  .attr("id", "pie_svg")
+  .append("g")
+  .attr("transform", `translate(${width / 3}, ${height / 2})`);
+
+function drawPie() {
+  d3.select("#pie_svg").remove();
+  d3.csv("data/Line,_and_Stop.csv").then((data) => {
+    // d3.csv parses a csv file and passes the data
+    // to an anonymous function. Note how we build
+    // our visual inside of this anonymous function
+
+    // let's check our data
+
+    for (let i = 0; i < 7920; i++) {
+      time_period_name_array[i] = data[i]["time_period_name"];
+    }
 
     for (let index = 0; index < data.length; index++) {
-      if (current_station == data[index]["stop_name"]) {
-        // adds average flows to get total flow for all stations
-        total_flow += parseInt(data[index]["average_flow"]);
+      if (all_stations_array.indexOf(data[index]["stop_name"]) == -1) {
+        all_stations_array.push(data[index]["stop_name"]);
+      }
+    }
 
-        // add to individual time flows
-        switch (data[index]["time_period_name"]) {
-          case "AM_PEAK":
-            AM_PEAK_flow += parseInt(data[index]["average_flow"]);
-            break;
-          case "EARLY_AM":
-            EARLY_AM_flow += parseInt(data[index]["average_flow"]);
-            break;
-          case "EVENING":
-            EVENING_flow += parseInt(data[index]["average_flow"]);
-            break;
-          case "LATE_EVENING":
-            LATE_EVENING_flow += parseInt(data[index]["average_flow"]);
-            break;
-          case "MIDDAY_BASE":
-            MIDDAY_BASE_flow += parseInt(data[index]["average_flow"]);
-            break;
-          case "MIDDAY_SCHOOL":
-            MIDDAY_SCHOOL_flow += parseInt(data[index]["average_flow"]);
-            break;
-          case "NIGHT":
-            NIGHT_flow += parseInt(data[index]["average_flow"]);
-            break;
-          case "OFF_PEAK":
-            OFF_PEAK_flow += parseInt(data[index]["average_flow"]);
-            break;
-          case "PM_PEAK":
-            PM_PEAK_flow += parseInt(data[index]["average_flow"]);
-            break;
-          case "VERY_EARLY_MORNING":
-            VERY_EARLY_MORNING_flow += parseInt(data[index]["average_flow"]);
-            break;
-          default:
-            break;
+    console.log(all_stations_array);
+
+    let pie_stations = [];
+
+    // show all stations if none are selected
+    if (selected_stations.length == 0) {
+      pie_stations = all_stations_array;
+    } else {
+      pie_stations = selected_stations;
+    }
+
+    console.log(pie_stations);
+    // for-loop for number of stations
+    for (let i = 0; i < pie_stations.length; i++) {
+      let current_station = pie_stations[i];
+
+      for (let index = 0; index < data.length; index++) {
+        if (current_station == data[index]["stop_name"]) {
+          // adds average flows to get total flow for all stations
+          total_flow += parseInt(data[index]["average_flow"]);
+
+          // add to individual time flows
+          switch (data[index]["time_period_name"]) {
+            case "AM_PEAK":
+              AM_PEAK_flow += parseInt(data[index]["average_flow"]);
+              break;
+            case "EARLY_AM":
+              EARLY_AM_flow += parseInt(data[index]["average_flow"]);
+              break;
+            case "EVENING":
+              EVENING_flow += parseInt(data[index]["average_flow"]);
+              break;
+            case "LATE_EVENING":
+              LATE_EVENING_flow += parseInt(data[index]["average_flow"]);
+              break;
+            case "MIDDAY_BASE":
+              MIDDAY_BASE_flow += parseInt(data[index]["average_flow"]);
+              break;
+            case "MIDDAY_SCHOOL":
+              MIDDAY_SCHOOL_flow += parseInt(data[index]["average_flow"]);
+              break;
+            case "NIGHT":
+              NIGHT_flow += parseInt(data[index]["average_flow"]);
+              break;
+            case "OFF_PEAK":
+              OFF_PEAK_flow += parseInt(data[index]["average_flow"]);
+              break;
+            case "PM_PEAK":
+              PM_PEAK_flow += parseInt(data[index]["average_flow"]);
+              break;
+            case "VERY_EARLY_MORNING":
+              VERY_EARLY_MORNING_flow += parseInt(data[index]["average_flow"]);
+              break;
+            default:
+              break;
+          }
         }
       }
     }
-  }
-  console.log(total_flow);
-  console.log(AM_PEAK_flow);
-  console.log(NIGHT_flow);
+    console.log(total_flow);
+    console.log(AM_PEAK_flow);
+    console.log(NIGHT_flow);
 
-  // piechart code used from https://d3-graph-gallery.com/graph/pie_annotation.html
+    // piechart code used from https://d3-graph-gallery.com/graph/pie_annotation.html
 
-  // set the dimensions and margins of the graph
-  const width = 600,
-    height = 600,
-    margin = 70;
+    // append the svg object to the div
+    svg = d3
+      .select("#pie-container")
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height)
+      .attr("id", "pie_svg")
+      .append("g")
+      .attr("transform", `translate(${width / 3}, ${height / 2})`);
 
-  // The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
-  const radius = Math.min(width, height) / 2.5 - margin;
+    // Convert data to percentages
+    let pieData = {
+      VERY_EARLY_MORNING: percentRound(VERY_EARLY_MORNING_flow / total_flow),
+      EARLY_AM: percentRound(EARLY_AM_flow / total_flow),
+      AM_PEAK: percentRound(AM_PEAK_flow / total_flow),
+      MIDDAY_BASE: percentRound(MIDDAY_BASE_flow / total_flow),
+      MIDDDAY_SCHOOL: percentRound(MIDDAY_SCHOOL_flow / total_flow),
+      PM_PEAK: percentRound(PM_PEAK_flow / total_flow),
+      OFF_PEAK: percentRound(OFF_PEAK_flow / total_flow),
+      EVENING: percentRound(EVENING_flow / total_flow),
+      LATE_EVENING: percentRound(LATE_EVENING_flow / total_flow),
+      NIGHT: percentRound(NIGHT_flow / total_flow),
+    };
 
-  // append the svg object to the div
-  const svg = d3
-    .select("#pie-container")
-    .append("svg")
-    .attr("width", width)
-    .attr("height", height)
-    .append("g")
-    .attr("transform", `translate(${width / 3}, ${height / 2})`);
+    function percentRound(p1) {
+      return Math.round(p1 * 100);
+    }
 
-  // calculating the percentages for the pie chart, live data being used
-  let AM_PEAK_count = 0;
-  let EARLY_AM_count = 0;
-  let EVENING_count = 0;
-  let LATE_EVENING_count = 0;
-  let MIDDAY_BASE_count = 0;
-  let MIDDAY_SCHOOL_count = 0;
-  let NIGHT_count = 0;
-  let OFF_PEAK_count = 0;
-  let PM_PEAK_count = 0;
-  let VERY_EARLY_MORNING_count = 0;
+    // set the color scale
+    const color = d3
+      .scaleOrdinal()
+      .range([
+        "#fff100",
+        "#ff8c00",
+        "#e81123",
+        "#ec008c",
+        "#68217a",
+        "#00188f",
+        "#00bcf2",
+        "#00b294",
+        "#009e49",
+        "#bad80a",
+      ]);
 
-  // Convert data to percentages
-  let pieData = {
-    VERY_EARLY_MORNING: percentRound(VERY_EARLY_MORNING_flow / total_flow),
-    EARLY_AM: percentRound(EARLY_AM_flow / total_flow),
-    AM_PEAK: percentRound(AM_PEAK_flow / total_flow),
-    MIDDAY_BASE: percentRound(MIDDAY_BASE_flow / total_flow),
-    MIDDDAY_SCHOOL: percentRound(MIDDAY_SCHOOL_flow / total_flow),
-    PM_PEAK: percentRound(PM_PEAK_flow / total_flow),
-    OFF_PEAK: percentRound(OFF_PEAK_flow / total_flow),
-    EVENING: percentRound(EVENING_flow / total_flow),
-    LATE_EVENING: percentRound(LATE_EVENING_flow / total_flow),
-    NIGHT: percentRound(NIGHT_flow / total_flow),
-  };
+    // Compute the position of each group on the pie:
+    const pie = d3
+      .pie()
+      .value(function (d) {
+        return d[1];
+      })
+      .sort(null);
+    const data_ready = pie(Object.entries(pieData));
+    // Now I know that group A goes from 0 degrees to x degrees and so on.
 
-  console.log(AM_PEAK_flow / total_flow);
-  function percentRound(p1) {
-    return Math.round(p1 * 100);
-  }
+    // shape helper to build arcs:
+    const arcGenerator = d3.arc().innerRadius(0).outerRadius(radius);
 
-  // set the color scale
-  const color = d3
-    .scaleOrdinal()
-    .range([
-      "#fff100",
-      "#ff8c00",
-      "#e81123",
-      "#ec008c",
-      "#68217a",
-      "#00188f",
-      "#00bcf2",
-      "#00b294",
-      "#009e49",
-      "#bad80a",
-    ]);
+    // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
+    svg
+      .selectAll("mySlices")
+      .data(data_ready)
+      .join("path")
+      .attr("d", arcGenerator)
+      .attr("fill", function (d) {
+        return color(d.data[0]);
+      })
+      .attr("stroke", "black")
+      .style("stroke-width", "2px")
+      .style("opacity", 0.7);
 
-  // Compute the position of each group on the pie:
-  const pie = d3
-    .pie()
-    .value(function (d) {
-      return d[1];
-    })
-    .sort(null);
-  const data_ready = pie(Object.entries(pieData));
-  // Now I know that group A goes from 0 degrees to x degrees and so on.
+    // Now add the annotation. Use the centroid method to get the best coordinates
+    // Annotation code from: https://stackoverflow.com/questions/8053424/label-outside-arc-pie-chart-d3-js
+    svg
+      .selectAll("mySlices")
+      .data(data_ready)
+      .join("text")
+      .text(function (d) {
+        return d.data[1] + "%";
+      })
+      .attr("transform", function (d) {
+        let c = arcGenerator.centroid(d);
+        let x = c[0];
+        let y = c[1];
+        let h = Math.sqrt(x * x + y * y);
+        let labelr = radius + 30;
+        return "translate(" + (x / h) * labelr + "," + (y / h) * labelr + ")";
+      })
+      .style("text-anchor", "middle")
+      .style("font-size", 9);
 
-  // shape helper to build arcs:
-  const arcGenerator = d3.arc().innerRadius(0).outerRadius(radius);
+    // Title
+    svg
+      .append("text")
+      .attr("x", 10)
+      .attr("y", -220)
+      .attr("text-anchor", "middle")
+      .style("font-size", "20px")
+      .style("font-weight", "bold")
+      .text("Ridership Distribution by Time of Day");
 
-  // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
-  svg
-    .selectAll("mySlices")
-    .data(data_ready)
-    .join("path")
-    .attr("d", arcGenerator)
-    .attr("fill", function (d) {
-      return color(d.data[0]);
-    })
-    .attr("stroke", "black")
-    .style("stroke-width", "2px")
-    .style("opacity", 0.7);
+    // legend code from https://d3-graph-gallery.com/graph/custom_legend.html
 
-  // Now add the annotation. Use the centroid method to get the best coordinates
-  // Annotation code from: https://stackoverflow.com/questions/8053424/label-outside-arc-pie-chart-d3-js
-  svg
-    .selectAll("mySlices")
-    .data(data_ready)
-    .join("text")
-    .text(function (d) {
-      return d.data[1] + "%";
-    })
-    .attr("transform", function (d) {
-      let c = arcGenerator.centroid(d);
-      let x = c[0];
-      let y = c[1];
-      let h = Math.sqrt(x * x + y * y);
-      let labelr = radius + 20;
-      return "translate(" + (x / h) * labelr + "," + (y / h) * labelr + ")";
-      //return `translate(${arcGenerator.centroid(d)})`;
-    })
-    .style("text-anchor", "middle")
-    .style("font-size", 12);
-
-  // legend code from https://d3-graph-gallery.com/graph/custom_legend.html
-
-  // Circles
-  svg
-    .append("circle")
-    .attr("cx", 200)
-    .attr("cy", 80)
-    .attr("r", 6)
-    .style("fill", "#fff100");
-  svg
-    .append("circle")
-    .attr("cx", 200)
-    .attr("cy", 100)
-    .attr("r", 6)
-    .style("fill", "#ff8c00");
-  svg
-    .append("circle")
-    .attr("cx", 200)
-    .attr("cy", 120)
-    .attr("r", 6)
-    .style("fill", "#e81123");
-  svg
-    .append("circle")
-    .attr("cx", 200)
-    .attr("cy", 140)
-    .attr("r", 6)
-    .style("fill", "#ec008c");
-  svg
-    .append("circle")
-    .attr("cx", 200)
-    .attr("cy", 160)
-    .attr("r", 6)
-    .style("fill", "#68217a");
-  svg
-    .append("circle")
-    .attr("cx", 200)
-    .attr("cy", 180)
-    .attr("r", 6)
-    .style("fill", "#00188f");
-  svg
-    .append("circle")
-    .attr("cx", 200)
-    .attr("cy", 200)
-    .attr("r", 6)
-    .style("fill", "#00bcf2");
-  svg
-    .append("circle")
-    .attr("cx", 200)
-    .attr("cy", 220)
-    .attr("r", 6)
-    .style("fill", "#00b294");
-  svg
-    .append("circle")
-    .attr("cx", 200)
-    .attr("cy", 240)
-    .attr("r", 6)
-    .style("fill", "#009e49");
-  svg
-    .append("circle")
-    .attr("cx", 200)
-    .attr("cy", 260)
-    .attr("r", 6)
-    .style("fill", "#bad80a");
-  // Texts
-  svg
-    .append("text")
-    .attr("x", 220)
-    .attr("y", 80)
-    .text("Very Early Morning")
-    .style("font-size", "15px")
-    .attr("alignment-baseline", "middle");
-  svg
-    .append("text")
-    .attr("x", 220)
-    .attr("y", 100)
-    .text("Early AM")
-    .style("font-size", "15px")
-    .attr("alignment-baseline", "middle");
-  svg
-    .append("text")
-    .attr("x", 220)
-    .attr("y", 120)
-    .text("AM Peak")
-    .style("font-size", "15px")
-    .attr("alignment-baseline", "middle");
-  svg
-    .append("text")
-    .attr("x", 220)
-    .attr("y", 140)
-    .text("Midday Base")
-    .style("font-size", "15px")
-    .attr("alignment-baseline", "middle");
-  svg
-    .append("text")
-    .attr("x", 220)
-    .attr("y", 160)
-    .text("Midday School")
-    .style("font-size", "15px")
-    .attr("alignment-baseline", "middle");
-  svg
-    .append("text")
-    .attr("x", 220)
-    .attr("y", 180)
-    .text("PM Peak")
-    .style("font-size", "15px")
-    .attr("alignment-baseline", "middle");
-  svg
-    .append("text")
-    .attr("x", 220)
-    .attr("y", 200)
-    .text("Off Peak")
-    .style("font-size", "15px")
-    .attr("alignment-baseline", "middle");
-  svg
-    .append("text")
-    .attr("x", 220)
-    .attr("y", 220)
-    .text("Evening")
-    .style("font-size", "15px")
-    .attr("alignment-baseline", "middle");
-  svg
-    .append("text")
-    .attr("x", 220)
-    .attr("y", 240)
-    .text("Late Evening")
-    .style("font-size", "15px")
-    .attr("alignment-baseline", "middle");
-  svg
-    .append("text")
-    .attr("x", 220)
-    .attr("y", 260)
-    .text("Night")
-    .style("font-size", "15px")
-    .attr("alignment-baseline", "middle");
-});
+    // Circles
+    svg
+      .append("circle")
+      .attr("cx", 200)
+      .attr("cy", 80)
+      .attr("r", 6)
+      .style("fill", "#fff100");
+    svg
+      .append("circle")
+      .attr("cx", 200)
+      .attr("cy", 100)
+      .attr("r", 6)
+      .style("fill", "#ff8c00");
+    svg
+      .append("circle")
+      .attr("cx", 200)
+      .attr("cy", 120)
+      .attr("r", 6)
+      .style("fill", "#e81123");
+    svg
+      .append("circle")
+      .attr("cx", 200)
+      .attr("cy", 140)
+      .attr("r", 6)
+      .style("fill", "#ec008c");
+    svg
+      .append("circle")
+      .attr("cx", 200)
+      .attr("cy", 160)
+      .attr("r", 6)
+      .style("fill", "#68217a");
+    svg
+      .append("circle")
+      .attr("cx", 200)
+      .attr("cy", 180)
+      .attr("r", 6)
+      .style("fill", "#00188f");
+    svg
+      .append("circle")
+      .attr("cx", 200)
+      .attr("cy", 200)
+      .attr("r", 6)
+      .style("fill", "#00bcf2");
+    svg
+      .append("circle")
+      .attr("cx", 200)
+      .attr("cy", 220)
+      .attr("r", 6)
+      .style("fill", "#00b294");
+    svg
+      .append("circle")
+      .attr("cx", 200)
+      .attr("cy", 240)
+      .attr("r", 6)
+      .style("fill", "#009e49");
+    svg
+      .append("circle")
+      .attr("cx", 200)
+      .attr("cy", 260)
+      .attr("r", 6)
+      .style("fill", "#bad80a");
+    // Texts
+    svg
+      .append("text")
+      .attr("x", 220)
+      .attr("y", 80)
+      .text("Very Early Morning")
+      .style("font-size", "15px")
+      .attr("alignment-baseline", "middle");
+    svg
+      .append("text")
+      .attr("x", 220)
+      .attr("y", 100)
+      .text("Early AM")
+      .style("font-size", "15px")
+      .attr("alignment-baseline", "middle");
+    svg
+      .append("text")
+      .attr("x", 220)
+      .attr("y", 120)
+      .text("AM Peak")
+      .style("font-size", "15px")
+      .attr("alignment-baseline", "middle");
+    svg
+      .append("text")
+      .attr("x", 220)
+      .attr("y", 140)
+      .text("Midday Base")
+      .style("font-size", "15px")
+      .attr("alignment-baseline", "middle");
+    svg
+      .append("text")
+      .attr("x", 220)
+      .attr("y", 160)
+      .text("Midday School")
+      .style("font-size", "15px")
+      .attr("alignment-baseline", "middle");
+    svg
+      .append("text")
+      .attr("x", 220)
+      .attr("y", 180)
+      .text("PM Peak")
+      .style("font-size", "15px")
+      .attr("alignment-baseline", "middle");
+    svg
+      .append("text")
+      .attr("x", 220)
+      .attr("y", 200)
+      .text("Off Peak")
+      .style("font-size", "15px")
+      .attr("alignment-baseline", "middle");
+    svg
+      .append("text")
+      .attr("x", 220)
+      .attr("y", 220)
+      .text("Evening")
+      .style("font-size", "15px")
+      .attr("alignment-baseline", "middle");
+    svg
+      .append("text")
+      .attr("x", 220)
+      .attr("y", 240)
+      .text("Late Evening")
+      .style("font-size", "15px")
+      .attr("alignment-baseline", "middle");
+    svg
+      .append("text")
+      .attr("x", 220)
+      .attr("y", 260)
+      .text("Night")
+      .style("font-size", "15px")
+      .attr("alignment-baseline", "middle");
+  });
+}
+drawPie();
 
 //------------------------------------------------------------------------------------------------------------------
 // TABLE
@@ -486,11 +516,11 @@ function drawTable() {
     // d3.csv parses a csv file and passes the data
     // to an anonymous function. Note how we build
     // our visual inside of this anonymous function
-  
+
     // let's check our data
-  
+
     let tableData = [];
-  
+
     for (let i = 0; i < data.length; i++) {
       let row = [];
       row["Station"] = data[i]["stop_name"];
@@ -498,7 +528,7 @@ function drawTable() {
       row["Ons"] = data[i]["average_ons"];
       row["Offs"] = data[i]["average_offs"];
       row["Average Flow"] = data[i]["average_flow"];
-  
+
       let found = false;
       for (let k = 0; k < tableData.length; k++) {
         if (
@@ -516,7 +546,7 @@ function drawTable() {
           break;
         }
       }
-  
+
       // TODO: Remove tableData.length <= 10. This only shows the first 10
       if (found == false) {
         tableData.push(row);
@@ -526,7 +556,7 @@ function drawTable() {
     // for (let i = 0; i < 10; i++) {
     //   console.log(tableData[i]);
     // }
-  
+
     // Filter tableData to selected_stations on the map
     let tableDataFiltered = [];
     for (let i = 0; i < selected_stations.length; i++) {
@@ -539,14 +569,17 @@ function drawTable() {
     }
     console.log("Printing tableDataFiltered");
     console.log(tableDataFiltered);
-  
+
     // Create table
-    let table = d3.select("#table-container").append("table").attr("id", "tableObject");
+    let table = d3
+      .select("#table-container")
+      .append("table")
+      .attr("id", "tableObject");
     let thead = table.append("thead");
     let tbody = table.append("tbody");
-  
+
     let columns = ["Station", "Line(s)", "Ons", "Offs", "Average Flow"];
-  
+
     thead
       .append("tr")
       .selectAll("th")
@@ -556,12 +589,16 @@ function drawTable() {
       .text(function (d, i) {
         return d;
       });
-  
-    let rows = tbody.selectAll("tr").data(tableDataFiltered).enter().append("tr");
-  
+
+    let rows = tbody
+      .selectAll("tr")
+      .data(tableDataFiltered)
+      .enter()
+      .append("tr");
+
     let cells = rows
       .selectAll("td")
-      .data(function (row) { 
+      .data(function (row) {
         return columns.map(function (column) {
           return {
             column: column,
