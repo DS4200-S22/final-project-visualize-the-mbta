@@ -54,7 +54,6 @@ function select_click() {
     // adds line to array
     selected_lines.push(this.getAttribute("line"));
   }
-  console.log(selected_stations);
   drawBar();
   drawTable();
   drawPie();
@@ -163,8 +162,6 @@ let NIGHT_flow = 0;
 let OFF_PEAK_flow = 0;
 let PM_PEAK_flow = 0;
 let VERY_EARLY_MORNING_flow = 0;
-
-// print first 10 rows to console
 let time_period_name_array = ["AM_PEAK"];
 
 // set the dimensions and margins of the graph
@@ -185,13 +182,10 @@ let svg = d3
   .attr("transform", `translate(${width / 3}, ${height / 2})`);
 
 function drawPie() {
+  // remove svg to re-render
   d3.select("#pie_svg").remove();
+  // render svg
   d3.csv("data/Line,_and_Stop.csv").then((data) => {
-    // d3.csv parses a csv file and passes the data
-    // to an anonymous function. Note how we build
-    // our visual inside of this anonymous function
-
-    // let's check our data
 
     for (let i = 0; i < 7920; i++) {
       time_period_name_array[i] = data[i]["time_period_name"];
@@ -203,8 +197,6 @@ function drawPie() {
       }
     }
 
-    console.log(all_stations_array);
-
     let pie_stations = [];
 
     // show all stations if none are selected
@@ -214,7 +206,6 @@ function drawPie() {
       pie_stations = selected_stations;
     }
 
-    console.log(pie_stations);
     // for-loop for number of stations
     for (let i = 0; i < pie_stations.length; i++) {
       let current_station = pie_stations[i];
@@ -262,9 +253,6 @@ function drawPie() {
         }
       }
     }
-    console.log(total_flow);
-    console.log(AM_PEAK_flow);
-    console.log(NIGHT_flow);
 
     // piechart code used from https://d3-graph-gallery.com/graph/pie_annotation.html
 
@@ -504,14 +492,12 @@ function drawPie() {
       .attr("alignment-baseline", "middle");
   });
 }
+// Render first instance
 drawPie();
-
 //------------------------------------------------------------------------------------------------------------------
 // TABLE
 function drawTable() {
   d3.select("#tableObject").remove();
-  console.log("Printing arguments");
-  console.log(selected_stations);
   d3.csv("data/Line,_and_Stop.csv").then((data) => {
     // d3.csv parses a csv file and passes the data
     // to an anonymous function. Note how we build
@@ -547,28 +533,21 @@ function drawTable() {
         }
       }
 
-      // TODO: Remove tableData.length <= 10. This only shows the first 10
+      // only add to table if hasnt been found yet
       if (found == false) {
         tableData.push(row);
       }
     }
-    // console.log("Printing first 10 entries in table");
-    // for (let i = 0; i < 10; i++) {
-    //   console.log(tableData[i]);
-    // }
 
     // Filter tableData to selected_stations on the map
     let tableDataFiltered = [];
     for (let i = 0; i < selected_stations.length; i++) {
       for (let k = 0; k < tableData.length; k++) {
         if (selected_stations[i] == tableData[k]["Station"]) {
-          console.log(tableData[k]);
           tableDataFiltered.push(tableData[k]);
         }
       }
     }
-    console.log("Printing tableDataFiltered");
-    console.log(tableDataFiltered);
 
     // Create table
     let table = d3
