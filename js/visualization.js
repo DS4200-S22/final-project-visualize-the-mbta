@@ -330,7 +330,7 @@ function drawPie() {
         let x = c[0];
         let y = c[1];
         let h = Math.sqrt(x * x + y * y);
-        let labelr = radius + 30;
+        let labelr = radius + 20;
         return "translate(" + (x / h) * labelr + "," + (y / h) * labelr + ")";
       })
       .style("text-anchor", "middle")
