@@ -186,7 +186,6 @@ function drawPie() {
   d3.select("#pie_svg").remove();
   // render svg
   d3.csv("data/Line,_and_Stop.csv").then((data) => {
-
     for (let i = 0; i < 7920; i++) {
       time_period_name_array[i] = data[i]["time_period_name"];
     }
@@ -197,18 +196,9 @@ function drawPie() {
       }
     }
 
-    let pie_stations = [];
-
-    // show all stations if none are selected
-    if (selected_stations.length == 0) {
-      pie_stations = all_stations_array;
-    } else {
-      pie_stations = selected_stations;
-    }
-
     // for-loop for number of stations
-    for (let i = 0; i < pie_stations.length; i++) {
-      let current_station = pie_stations[i];
+    for (let i = 0; i < selected_stations.length; i++) {
+      let current_station = selected_stations[i];
 
       for (let index = 0; index < data.length; index++) {
         if (current_station == data[index]["stop_name"]) {
