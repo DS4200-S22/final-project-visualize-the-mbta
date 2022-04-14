@@ -487,13 +487,11 @@ drawPie();
 //------------------------------------------------------------------------------------------------------------------
 // TABLE
 function drawTable() {
+  // Remove old table to re-render
   d3.select("#tableObject").remove();
-  d3.csv("data/Line,_and_Stop.csv").then((data) => {
-    // d3.csv parses a csv file and passes the data
-    // to an anonymous function. Note how we build
-    // our visual inside of this anonymous function
 
-    // let's check our data
+  // parse data
+  d3.csv("data/Line,_and_Stop.csv").then((data) => {
 
     let tableData = [];
 
@@ -582,6 +580,7 @@ function drawTable() {
       });
   });
 }
+// Render table for the first time
 drawTable();
 
 //------------------------------------------------------------------------------------------------------------------
@@ -605,6 +604,7 @@ let barSvg = d3
 
 // Parse the Data
 function drawBar() {
+  // Remove old bar chart to re-render
   d3.select("#barSVG").remove();
 
   barSvg = d3
@@ -705,4 +705,5 @@ function drawBar() {
       .text("Total Ridership");
   });
 }
+// Render bar chart for the first time
 drawBar();
