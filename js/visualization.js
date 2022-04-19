@@ -75,6 +75,7 @@ d3.json("data/mass_counties.json").then(function (topology) {
 
   // load and display the stations and their names
   d3.csv("data/station_locations.csv").then(function (data) {
+
     //adding station points
     g.selectAll("circle")
       .data(data)
@@ -87,11 +88,12 @@ d3.json("data/mass_counties.json").then(function (topology) {
         return projection([d.X, d.Y])[1];
       })
       .attr("r", 5)
-      // attribute which representing the corresponding station name to the circle
+
+      // attribute for representing the corresponding station name to the circle
       .attr("station", function (d) {
         return d.stop_name;
       })
-      // attribute which representing the corresponding line name to the circle
+      // attribute for representing the corresponding line color to the circle
       .attr("line", function (d) {
         return d.line_color;
       })
