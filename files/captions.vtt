@@ -1,0 +1,99 @@
+WEBVTT
+Kind: captions
+Language: en-US
+
+00:00:02.770 --> 00:00:05.970
+Here is our visualization tool for the MBTA.
+
+00:00:05.970 --> 00:00:10.340
+On the top left of the screen, you will be
+able to see a map of all MBTA train stations
+
+00:00:10.340 --> 00:00:14.080
+for the red, orange, green and blue lines.
+
+00:00:14.080 --> 00:00:18.070
+Each dot represents a single station, and
+its color represents which line it belongs
+
+00:00:18.070 --> 00:00:19.570
+to.
+
+00:00:19.570 --> 00:00:24.650
+On the top right, we have a pie chart representing
+the rider distribution by the time of day.
+
+00:00:24.650 --> 00:00:30.160
+On the bottom right, we have a bar chart representing
+the total ridership for each line.
+
+00:00:30.160 --> 00:00:34.730
+On the bottom left, we have a table showing
+all the stations that the user has currently
+
+00:00:34.730 --> 00:00:38.270
+selected and its corresponding data.
+
+00:00:38.270 --> 00:00:43.280
+The table, bar chart and pie chart are all
+are linked to the map on the top left.
+
+00:00:43.280 --> 00:00:50.440
+Since we have currently selected Harvard here,
+the pie chart shows the rider distribution
+
+00:00:50.440 --> 00:00:57.601
+for Harvard, the bar chart highlights red
+because Harvard is a on the red line, and
+
+00:00:57.601 --> 00:01:01.000
+the table shows the data for Harvard station.
+
+00:01:01.000 --> 00:01:05.040
+Additionally, users can select more than one
+station.
+
+00:01:05.040 --> 00:01:10.100
+For example, the MBTA maintenance team wants
+to find the best time of day to do maintenance
+
+00:01:10.100 --> 00:01:14.509
+on the Harvard, Porter and Sullivan Square
+stations.
+
+00:01:14.509 --> 00:01:23.299
+As Harvard is already selected, we select
+Sullivan Square and Porter on our map.
+
+00:01:23.299 --> 00:01:27.850
+Now we see below that all these stations show
+up on our table.
+
+00:01:27.850 --> 00:01:33.200
+The bar chart now highlights orange too, as
+Sullivan square belongs to the orange line.
+
+00:01:33.200 --> 00:01:36.909
+The pie chart also updates showing data for
+all three stations.
+
+00:01:36.909 --> 00:01:42.150
+From our pie chart, we can tell that the best
+time of the day to do maintenance is sometime
+
+00:01:42.150 --> 00:01:46.189
+during the morning or the late evening.
+
+00:01:46.189 --> 00:01:53.670
+If we want, we can always unselect stations
+from our map like this, and the charts will
+
+00:01:53.670 --> 00:01:56.600
+automatically update.
+
+00:01:56.600 --> 00:01:58.529
+And that is how to use our visualization tool.
+
+00:01:58.529 --> 00:01:59.460
+Thank you for watching.
+
